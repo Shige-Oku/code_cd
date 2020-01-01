@@ -1,0 +1,57 @@
+プロジェクトＩＤの確認
+gcloud config list project --format "value(core.project)"
+
+Cloud Datalabを作成しインスタンスを起動
+datalab create --no-create-repository --zone us-central1-a mydatalab
+
+datalab用のリストを表示
+datalab list
+
+VM名を指定してデータラボに再接続
+datalab connect mydatalab
+
+datalabの削除
+datalab delete mydatalab
+
+バケットの一覧を出力するコマンド
+gsutil ls
+
+バケット内のオブジェクト一覧を出力するコマンド
+gsutil ls <バケット>
+
+
+※Ｗｅｂアプリケーションのデプロイ
+gitからデータ取得
+git clone https://github.com/GoogleCloudPlatform/training-data-analyst
+
+ディレクトリ移動
+cd training-data-analyst/blogs/babyweight/application/
+
+必要なパッケージのインストール
+pip install -r requirements.txt -t lib
+
+GAE作成=>リージョン選択
+gcloud app create
+
+アプリケーションのデプロイ
+gcloud app deploy
+
+[https://crested-polygon-231213.appspot.com]
+
+
+バケットを作成
+gsutil mb -l us-central1 gs://crested-polygon-231213-ml/
+
+ml-engineにジョブをサブミット
+gcloud ml-engine jobs submit training $JOBNAME
+
+
+ML-Engineでモデルを作成、削除
+gcloud ml-engine models create ${MODEL_NAME}
+gcloud ml-engine models delete ${MODEL_NAME}
+
+モデルのバージョンを作成、」削除
+gcloud ml-engine versions create ${MODEL_VERSION} --model ${MODEL_NAME} --origin ${MODEL_LOCATION} --runtime-version 1.4
+gcloud ml-engine versions delete ${MODEL_VERSION} --model ${MODEL_NAME}
+
+

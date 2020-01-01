@@ -1,0 +1,13 @@
+ルート権限の取得
+sudo su -
+
+ＯＳの更新
+apt-get update
+
+NGINX をインストールします。
+apt-get install nginx -y
+
+NGINX が動作していることを確認します。
+ps auwx | grep nginx
+
+

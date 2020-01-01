@@ -1,0 +1,67 @@
+仮想マシンに接続
+gcloud compute --project crested-polygon-231213 ssh --zone us-east1-b instance-2
+
+Pythonでウェブサーバを起動（ポート番号:80）
+sudo python -m SimpleHTTPServer 80
+
+ローカルホストからクラウドＶＭにファイルアップロード
+gcloud compute scp C:\Users\owner\Documents\茂治\link\GCP.txt instance-2:/home/owner --zone us-east1-b
+※--zoneオプションが必要だった。
+　/home/owner以外のディレクトリにファイル作成できない。
+
+クラウドＶＭからファイルをダウンロード
+gcloud compute scp instance-2:/home/owner/GCP.txt C:\gcptest --zone us-east1-b
+
+使用可能な仮想マシンのリストを表示
+gcloud compute instances list
+
+使用可能な仮想マシンイメージのリストを表示
+gcloud compute images list
+
+インスタンスの起動・停止
+gcloud compute instances start <your-instance-name> --zone <zone>
+gcloud compute instances stop <your-instance-name> --zone <zone>
+
+インスタンスへローカルのファイルをコピーする
+※ワーニングが出る。`gcloud compute scp`が推奨の模様
+gcloud compute copy-files <local-path> <your-instance-name>:<remote-path> --zone <zone>
+
+インスタンスにあるファイルをローカルにコピーする
+gcloud compute copy-files <your-instance-name>:<remote-path> <local-path> --zone <zone>
+
+
+バックエンド
+MongoDB をインストール
+パッケージの更新
+sudo apt-get update
+sudo apt-get install mongodb
+
+DBの作成
+１．MongoDBを停止
+sudo service mongodb stop
+２．ディレクトリを作成
+sudo mkdir $HOME/db
+３．mongod起動
+sudo mongod --dbpath $HOME/db --port 80 --fork --logpath /var/tmp/mongodb
+
+
+フロンドエンド
+sudo apt-get update
+curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
+sudo apt-get install git nodejs
+フロントエンド ウェブアプリをインストールして実行する
+git clone https://github.com/GoogleCloudPlatform/todomvc-mongodb.git
+cd todomvc-mongodb; npm install
+sed -i -e 's/8080/80/g' server.js
+sudo nohup nodejs server.js --be_ip 10.142.0.5 --fe_ip 10.142.0.2 &
+
+Windows2012
+１．Powershellを起動
+２．IISインストール
+import-module servermanager
+add-windowsfeature web-server -includeallsubfeature
+３．デフォルトページを上書き
+echo '<!doctype html><html><body><h1>Hello World!</h1></body></html>' > C:\inetpub\wwwroot\index.html
+
+
+

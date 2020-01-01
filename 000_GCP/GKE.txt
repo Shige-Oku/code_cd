@@ -1,0 +1,26 @@
+
+クラスタの作成
+gcloud container clusters create [CLUSTER-NAME]
+
+クラスタの認証情報を取得します。
+gcloud container clusters get-credentials [CLUSTER-NAME]
+
+hello-app コンテナ イメージから新しい Deployment（hello-server）を作成します。
+kubectl run hello-server --image=gcr.io/google-samples/hello-app:1.0 --port 8080
+
+--image はデプロイするコンテナ イメージを指定するものです。上のコマンドでは、Google Container Registry バケットからサンプル イメージが呼び出されます。gcr.io/google-samples/hello-app:1.0 は、呼び出すイメージのバージョンを指定しています。バージョンが指定されていない場合は、最新バージョンが呼び出されます。
+
+--port はコンテナで公開するポートを指定するものです。
+
+Kubernetes リソースの一種である Kubernetes サービスを作成します。このサービスで kubectl expose を実行することで、アプリケーションを外部トラフィックに公開することができます。
+kubectl expose deployment hello-server --type="LoadBalancer"
+
+type="LoadBalancer" を渡されると、コンテナの Compute Engine ロードバランサが作成されます。
+
+hello-server Service について確認します。
+kubectl get service hello-server
+
+クラスタを削除します。
+gcloud container clusters delete [CLUSTER-NAME]
+
+

@@ -1,0 +1,86 @@
+すべての仮想マシン インスタンスで使用される起動スクリプトを作成します。このスクリプトの起動時に Nginx サーバーが構成されます。
+cat << EOF > startup.sh
+#! /bin/bash
+apt-get update
+apt-get install -y nginx
+service nginx start
+sed -i -- 's/nginx/Google Cloud Platform - '"\$HOSTNAME"'/' /var/www/html/index.nginx-debian.html
+EOF
+
+起動スクリプトを使用するインスタンス テンプレートを作成します。
+gcloud compute instance-templates create nginx-template --metadata-from-file startup-script=startup.sh
+
+ターゲット プールを作成します。
+gcloud compute target-pools create nginx-pool
+
+ターゲットプールの確認
+gcloud compute target-pools  list
+
+インスタンス テンプレートを使用してマネージド インスタンス グループを作成します。
+gcloud compute instance-groups managed create nginx-group \
+         --base-instance-name nginx \
+         --size 2 \
+         --template nginx-template \
+         --target-pool nginx-pool \
+
+gcloud compute instance-groups managed list
+
+gcloud compute instance-groups list
+
+
+コンピューティング エンジン インスタンスの一覧を表示し、すべてのインスタンスが作成されたことを確認します。
+gcloud compute instances list
+
+ファイアウォールを構成し、EXTERNAL_IP アドレス経由でマシンのポート 80 に接続できるようにします。
+gcloud compute firewall-rules create www-firewall --allow tcp:80
+
+gcloud compute firewall-rules list
+
+インスタンス グループを対象とした L3 ネットワーク ロードバランサを作成
+gcloud compute forwarding-rules create nginx-lb \
+         --region us-central1 \
+         --ports=80 \
+         --target-pool nginx-pool
+
+プロジェクトに含まれるすべての Google Compute Engine 転送ルールのリストを表示します。
+gcloud compute forwarding-rules list
+
+
+ヘルスチェックを作成します。ヘルスチェックでは、インスタンスが HTTP または HTTPS トラフィックにレスポンスすることが確認されます。
+gcloud compute http-health-checks create http-basic-check
+
+gcloud compute http-health-checks list
+
+ポート名をインスタンス グループの該当するポートにマッピングします。これで、名前を指定したポートに負荷分散サービスがトラフィックを転送できるようになります。
+gcloud compute instance-groups managed \
+       set-named-ports nginx-group \
+       --named-ports http:80
+
+バックエンド サービスにインスタンス グループを追加します。
+gcloud compute backend-services create nginx-backend \
+      --protocol HTTP --http-health-checks http-basic-check --global
+
+gcloud compute backend-services list
+
+あらゆるインスタンスへの受信リクエストをすべて振り向けるデフォルトの URL マップを作成します。
+gcloud compute url-maps create web-map \
+    --default-service nginx-backend
+
+gcloud compute url-maps list
+
+自身の URL マップにリクエストを振り向けるターゲット HTTP プロキシを作成します。
+gcloud compute target-http-proxies create http-lb-proxy \
+    --url-map web-map
+
+gcloud compute target-http-proxies list
+
+受信リクエストを処理し、振り向ける、グローバルの転送ルールを作成します。転送ルールにより、IP アドレス、IP プロトコル、ポートの指定に応じて、特定のターゲット HTTP プロキシまたは HTTPS プロキシにトラフィックが送信されるようになります。なお、グローバル転送ルールでは複数のポートはサポートされていません。
+gcloud compute forwarding-rules create http-content-rule \
+        --global \
+        --target-http-proxy http-lb-proxy \
+        --ports 80
+
+グローバル転送ルールの作成したリストの表示
+gcloud compute forwarding-rules list
+
+
