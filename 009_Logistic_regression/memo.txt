@@ -1,0 +1,235 @@
+ロジスティック回帰
+
+・ロジスティク回帰は「教師あり学習」に分類
+・教師あり学習は「回帰（Regression）」と「 分類（Classification）」の二つに細分化
+・二項分類（バイナリークラス）と多項分類（マルチクラス）
+
+分類アルゴリズム
+・近傍法（Nearest Neighbors）
+・線形SVM（Linear SVM）
+・ガウス過程（Gaussian Process）
+・決定木（Decisiion Tree）
+・ランダムフォレスト（Random Forest）
+・ニューラルネットワーク（Neural Network)
+
+・決定境界とは各アルゴリズムが導き出した「分類クラスの境目」
+・ロジスティック回帰を端的に表すと、「分類問題に対する確率論的アプローチ」
+・ロジスティック回帰の目標は、 サンプルが特定のカテゴリやクラスに属する「確率」をモデル化すること
+
+メリット
+・シンプルで理解しやすい構造のため分類をした結果の「説明」が容易
+・確率的なアプローチである。「このキノコは82.5%の確率で毒性である」
+・パラメータチューニングの必要がない。
+
+デメリット
+・非線形の決定境界にはフィットしない。ロジスティック回帰は線型性を前提としているため、データが複雑な相関性を持つ場合は、適用できない。
+
+
+使用するデータセット
+・Mushroom Classification
+　https://www.kaggle.com/uciml/mushroom-classification/data
+
+・1981年に出版された「The Audubon Society Field Guide to North American Mushrooms」の書籍から、ハラタケ属（Agaricus）とキツネノカラカサ属（Lepiota）のキノコの種類に対して、食用または毒性のラベルが付与されたデータセット
+
+特徴量：23
+データ数：8,124
+
+・各種類のキノコに対して教師ラベルとしてe＝食料、p＝毒性（'class'列）が与えられているなど。
+　特徴量.xlsx参照
+
+・「class」が今回のターゲット（y)。値は「p=毒性」と「e＝食用」の2種類
+・今回使うデータは「gill-size（ひだのサイズ）」と「bruises（あざ）」
+・gill-size	ひだのサイズ	b=広い、 n=狭い
+・bruises	あざ	t=あざあり、 f=あざなし
+
+
+シグモイド関数
+　f(x) = e ** (w1 * x + w0) / 1 + e ** (w1 * x + w0) 
+　または
+　f(x) = 1 / 1 + e ** -(w1 * x + w0)
+　
+　・w1 は係数または傾き
+  ・w0は定数項またはY切片
+  ・xはデータ内の特徴量x
+  ・e = 2.71828183 ネイピア数
+ネイピア数：英語では「Napier's constant」、また欧米などではオイラー数 (Euler's number)
+
+matplotlib基礎 | figureやaxesでのグラフのレイアウト - Qiita
+https://qiita.com/gaku8/items/90167693f142ebb55a7d
+
+# figsize で図のサイズを決定。数字はインチ。デフォルトが(8, 6)。
+# 画像全体のサイズを指定（縦, 横）。
+plt.figure(figsize=(25, 21 * 5))
+
+#figure内の枠の大きさとどこに配置しているか。subplot(行の数, 列の数, 何番目に配置しているか)
+plt.subplot(x, y, z)
+
+# 必要なプロットの行数と列数
+GridSpec(x, y)
+
+# データの件数 (頻度) を集計
+sns.countplot()
+  x, y：集計対象の列名。x に指定した場合縦方向に、y に指定した場合横方向にグラフを描画。
+  hue：各軸をさらに分割して集計する場合に利用する列名を指定。
+  data：集計対象のデータフレーム。
+  order：出力する順番を文字列のリストで指定。
+  hue_order：上記 hue で指定した列を出力する順番を文字列のリストで指定。
+  color：各列の色をリストまたはパレットで指定。
+  palette：上記 hue で指定した列の色リストまたはパレットで指定。 (デフォルト値: None)
+  saturation：色の彩度。1 に近いほど原色に近く、0 に近いほど白・黒に近い色合いで出力。 (デフォルト値: 0.75)
+  ax：軸を重ねて出力する場合に指定。
+  **kwargs：matplotlib の plt.bar で定義されている引数を設定可能です
+
+
+
+1. ダミー変数へ変換
+　ターゲット（class）や特徴量（gill-size / bruises）の値は全て文字列。
+　それぞれの値に属している場合は「1」、属していない場合は「0」のようにダミー変数へ変換。
+　「あざあり」には「1（はい）」、「あざなし」には「0（いいえ）」のような処理を行う。
+　ロジスティック回帰でダミー変数を使用する場合は、どちらかの値を落とさないといけない。
+　「gill-size_b」「bruises_f」をデータフレームから落とす。（ダミー変数トラップ対策）
+　離散的な値で大小比較など関係ない特徴量はone-hotにする必要がある。
+
+pd.get_dummies()：ダミー変数を作成（one-hot)
+　drop_first：最初のダミー変数を除外するか
+　dummy_na：NULL(NaN)もダミー変数化するか
+
+train_test_split()：データを訓練用とテスト用に分割する
+  test_size：テストデータの割合またはサイズ
+  train_size：訓練データの割合またはサイズ
+  shuffle：シャッフルするか。デフォルトは true（シャッフルする）
+  random_state：乱数シードを固定する。乱数シードを指定すると常に同じように分割する。
+
+RFE：Recursive Feature Elimination　の略。再帰的特徴消去。
+　estimator：使用する外部推定機。教師あり学習のモデル。このモデルに基づいて特徴の重要度を判断する。必須。
+　n_features_to_select：選択する特徴の数を指定。何も指定しなかった場合、特徴量は半分になる。
+　step：特徴量削除の速度。一度の再帰処理により指定ステップ分の特徴量が消滅する。
+　verbose：出力の冗長性を制御する
+　
+　Attributes：
+　　n_features_：抽出した特徴量の数。
+　　support_：選択した特徴(true)と選択しなかった特徴(false)の表示。
+　　ranking_：特徴ランキング。選択された特徴はランク１となる。
+　　estimator_：使用した外部推定機の詳細。
+
+
+2. 文字列から数値へ変換：
+
+データ前処理② データを Categorical から Numerical に。 - Qiita
+https://qiita.com/kibinag0/items/723f95277263921650b4
+
+labelEncoder.fit_transform()：エンコード
+labelEncoder.inverse_transform()：デコード
+
+
+statsmodel.add_constant()：切片（バイアス）を使用するのに、列名'const'で値「1」の列を追加する。
+  add_constantという関数は1という値だけの列を追加していて、これが切片（説明変数にかかわらずオフセットされる量）となる。
+  Statsmodelsの流儀で、モデルに切片を使う場合はこのようにしなければならない。
+
+
+chapter 4 特徴量が１つのロジスティック回帰
+
+「Scikit-learn（サイキット・ラーン）」
+
+・ライブラリーのインポート
+・CSVファイルの読み込み
+・探索的データ分析（Exploratory Data Analysis）
+・ラベルエンコーディング（データー前処理）
+・訓練データとテストデータの分割
+・単一特徴量のロジスティック回帰モデルの訓練と評価
+・テストデータを利用したモデル評価
+
+セクション2 探索的データ解析（EDA)
+　EDA:Explanatory Data Analysis
+　データセットの知っておくべき前提や特徴、さらには可視化をしてより深い理解を得る。
+
+pd.describe()：基本統計量を確認
+　・基本統計量とは、データの基本的な特性を示すもので、全体を調べて、特徴や傾向を把握する
+・count = データの個数
+・unique = ユニークなデータの個数
+・top = 最も多いデータの値
+・freq = 最も多いデータの値の数
+
+pd.isnull().sum()：欠損値の確認
+
+セクション3 データの前処理
+　・特徴量の文字列の値を数値に変換。ダミー変数の作成。
+　・正解'class'を数値化
+　・訓練データとテストデータの分割
+
+
+セクション4 モデルの訓練
+
+# 訓練データをロジスティック回帰のモデルへ訓練
+logclassifier = LogisticRegression(solver='liblinear')
+logclassifier.fit(X_train, y_train)
+
+
+セクション5 予測とモデルの評価
+
+# 予測
+logclassifier.predict(X_train)
+
+# 混合行列を作成
+confusion_matrix(y_train, y_pred)
+
+適合率（precision）：
+  適合率 = TP / (TP + FP)
+  precision_score()
+
+
+再現率（recall）：
+  再現率 = TP/ (TP + FN)
+  recall_score()
+
+正解率（accuracy）：
+  正解率 = (TP + TN) / (TP + FP + FN + TN)
+  accuracy_score()
+
+F値(F Mesure)：
+  F値 = 2TP / (2TP + TN + FP)
+  f1_score()
+
+# 正解率の出力
+accuracy_score(y_train, y_pred)
+
+scikit-learnで混同行列を生成、適合率・再現率・F1値などを算出 | note.nkmk.me
+https://note.nkmk.me/python-sklearn-confusion-matrix-score/
+
+scikit-learnでROC曲線とそのAUCを算出 | note.nkmk.me
+https://note.nkmk.me/python-sklearn-roc-curve-auc-score/
+
+
+chapter 5 複数の特徴量のロジスティック回帰
+
+セクション3 特徴選択（Feature Selection）
+  ・特徴選択とは、複数ある特徴量のうち、機械学習の学習モデルの質をより高める特徴量のみを選択/検討する手法。
+  ・別の呼び方として「特徴量選択」「変数選択」「特徴削減」と呼ばれる。
+
+「Scikit-learn」の「RFE」というパッケージを利用する。
+　RFEとは、Recursive Feature Elimination（リカーシブ・フューチャー・エリミネーション）の略で、直訳で再帰的特徴量削減。
+
+# RFEを使って特徴選択
+logreg = LogisticRegression()
+rfe = RFE(logreg, 5, verbose=1)
+rfe = rfe.fit(X_train, y_train)
+
+下記特徴量を使用
+・odor_c = 匂い（クレオソート）
+・odor_n = 匂い（無臭）
+・odor_p = 匂い（刺激臭）
+・spore-print-color_k = 胞子の色（黒）
+・spore-print-color_n = 胞子の色（茶）
+
+
+chapter 6 ロジスティック回帰のモデル評価方法
+
+  F1 = 2 * (precision * recall) /  (recision + recall)
+
+
+ROC曲線/AUC
+  ・ROC曲線とは、ROC(Receiving Operator Characteristic）の曲線をさしており、ROC曲線下の面積をAUC（Area under the Curve)と呼ぶ。
+　・横軸にFalse Positiveの割合、縦軸にTrue Positiveの割合をグラフ化したもの
+　
+
+

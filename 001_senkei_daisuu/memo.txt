@@ -1,0 +1,110 @@
+chapter 4 Numpy 配列
+
+・Numpy配列の生成はnp.array()
+・typeはnumpy.ndarray
+・shapeで配列のサイズを確認
+・array[0]で0行目の要素のアクセス
+・array[2,　3」で2行目3列目の要素のアクセス
+・array[:2]で2行までアクセス
+・array[2:]で行2からアクセス
+・array[:2, 1]行2までの列1へアクセス
+・np.zeros() 要素が全て0のNumpy配列の生成
+・np.ones() 要素が全て1のNumpy配列の生成
+・np.full() 指定した値を持つNumpy配列の生成
+・np.eye() 単位行列のNumpy配列を生成
+
+np.dot()：内積
+np.eye()：単位行列
+np.linalg.inv()：逆行列
+np.T：転置
+np.modf()：整数と小数部分を分ける
+
+
+chapter 6 行列積
+
+
+行列の積の計算方法
+・ndarray * ndarray は各要素の掛け算
+・np.dot()で行列の積を求められる
+・a.dot(b) = np.dot(a,b)
+・np.dot(a,b)とnp.dot(b,a)の解は異なる場合がある
+・np.array(python-list)でPythonリストをNumpy配列へ変換
+・np.ndarray.tolist()でNumpy配列からPythonリストへ変換
+
+
+chapter 7 乱数生成
+
+・乱数とはランダムな数値のこと
+・値や分布に応じて種類が分かれている
+・一様乱数は0?1の一様分布の乱数
+・標準正規分布は標準偏差を1、平均値が0の分布の乱数
+・np.random.rand() 一様乱数の生成
+・np.random.randn() 標準正規分布の乱数生成
+・np.random.normal() 正規分布の乱数生成
+・np.random.binomial() 二項分布の乱数生成
+・np.random.beta() ベータ分布の乱数生成
+・np.random.gamma() ガンマ分布の乱数生成
+・np.random.poisson() ポアソン分布の乱数生成
+・np.random.chisquare() カイ二乗分布の乱数生成
+
+・np.random.randint() 整数の乱数生成
+・np.random.seed() 乱数の種（シード）の指定：同じ乱数を発生させる
+・np.random.choice() ランダムに抽出
+・np.random.shuffle() シャッフル
+
+
+chapter 8 行列の演算と処理
+
+・np.linalg.inv(ndarray) ndarrayの逆行列を算出
+・ndarray.T ndarrayの転置行列を算出
+・np.diag(ndarray) ndarrayの対角成分の取得
+・np.inner() ベクトルの内積を算出
+・np.outer() ベクトルの外積を算出
+
+
+chapter 9 数学系の関数
+
+三角関数
+・np.sin() sineを算出（度数ではなくラジアン）
+・np.cos() cosineを算出（度数ではなくラジアン）
+・np.tan() tangentを算出（度数ではなくラジアン）
+
+逆三角関数
+・np.arcsin() sineのラジアンを算出
+・np.arccos() cosineのラジアンを算出
+・np.arctan() tangentのラジアンを算出
+
+双曲線関数
+・np.arcsinh()：ハイパボリックサイン
+・np.arccosh()：ハイパボリックコサイン
+・np.arctanh()：ハイパボリックタンジェント
+
+度数とラジアン
+・np.radians() 度数からラジアンへ変換
+・np.deg2rad() 度数からラジアンへ変換
+・np.rad2deg() ラジアンから度数へ変換
+
+・np.exp() 指数関数（Exponential / エクスポネンシャル）
+・np.log() 対数関数（Logarithm / ロガリズム）eが底
+・np.log2() 2が底
+・np.log10() 10が底
+・np.loglp() 
+
+
+・np.sign() 「正」「負」「ゼロ」を分別
+・np.rint() 小数点を四捨五入して整数にする
+・np.modf() 小数点部と整数部に分けて配列で返す
+・np.floor() 切り捨て（値が小さいほうの整数にする）
+・np.trunc() 小数部分を切り捨て
+・np.ceil() 切り上げ（値が大きいほうの整数にする）
+・np.round() 四捨五入
+・np.around() 四捨五入
+・np.fix() 0に近い方向の整数
+
+絶対値
+・np.absolute()
+・np.abs()
+・np.fabs()
+
+
+
