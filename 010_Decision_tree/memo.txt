@@ -1,0 +1,257 @@
+
+chapter 1 環境構築
+
+Graphviz のインストール
+  ・conda install Graphviz
+  ・pip install Graphviz 
+
+Graphvizの起動確認
+  dot -v
+
+chapter 2 決定木の概要
+
+セクション2 決定木の特徴
+  ・回帰と分類に適用可能。
+  ・特徴量のデータ型は、「数値」「カテゴリ」の両方が特徴量として使える。
+  ・結果の説明が容易。
+  ・過学習しやすく汎用性が低い。
+  ・決定木には複数のアルゴリズムがある。
+  　アルゴリズムとして最も頻繁に使われるのが「CART」。
+  　日本語で「カート」。Classification and Regression Treeの略。
+  　CARTでは2分岐のみ。他のアルゴリズム（例：C4.0）では3つ以上の分岐が可能
+
+セクション3 分類木
+　「分類木」では各ノードの分岐条件に基づいて分類クラスを振り分け
+
+使用するデータ：
+　・「Iris（アイリス）」日本語で「アヤメ（花）」
+　・3品種のアヤメの分類と特徴のデータ（setosa, versicolor, virginica）
+　・特徴量（4種類）：
+　　・sepal length:がく片の長さ(cm)
+　　・sepal width:がく片の幅(cm)
+　　・petal length:花弁の長さ(cm)
+　　・petal width:花弁の幅(cm)
+
+データ数：150
+
+tree.DecisionTreeClassifier()：分類の決定木
+
+tree.DecisionTreeRegressor()：分類の決定木
+
+graph で可視化すると下記エラーが出る。
+ExecutableNotFound: failed to execute ['dot', '-Tsvg'], make sure the Graphviz executables are on your systems' PATH
+
+  １．out_file="iris_data.dot"を指定して、.dot=>.pngに下記コマンドで変換した。
+    dot -Tpng cancer_tree.dot -o cancer_tree.png
+
+  ２．pip install Graphviz を実行していなかった。
+  　　環境変数PATHに「C:\Users\owner\Anaconda3\Library\bin\graphviz」を追加、再起動した。
+
+結果の味方：
+ノードの味方：
+（1行目） データ分割の条件
+　最上部のノードを見ていただくと「petal width(cm) <= 0.8(2.45)」。このノードにおいてのデータ分割条件。
+　つまりこのノードではpetal width（花弁の幅）が0.8(2.45)以下かどうかを振り分けている。
+
+（2行目） gini = ジニ不純度
+　ジニ不純度とは「データがどれだけ上手に分岐できるか」を表す指標。
+　Giniは最大を1として値が大きいほど不純度が高い、つまり上手に分岐できていないことを意味する。
+　Scikit-learnの決定木ではデフォルトでジニ不純度が使われているが、
+　パラメーターに「entropy」と指定することで情報エントロピーという異なる種類の指標を利用することも可能。
+
+（3行目）samples = 観測数
+　最初のノードはsamples=150とあり、2層目の左側（橙色）のノードをみるとsamples=50となっている。
+　これらのsamplesとは各ノード（またはカテゴリー）に分類された観測数を表す。
+　アイリスのデータは全部で150あったので、最初のノードのSamplesは150からスタート。
+　分岐条件は「花弁の幅が0.8(2.45)」とあり、その分岐条件の結果、0.8(2.45)以下のサンプルは50（左オレンジのノード）、
+　0.8(2.45)より大きいサンプルは100（右白のノード）とデータが分岐している。
+
+（4行目） value = ノードの分類サマリー
+　データセットには3つのクラス（品種）がある。４行目のvalueとは各ノードの分類のサマリーを表す。
+　最上部のノードを確認してみると[50, 50, 50]とあり、
+　これはこのノード内のデータの分類が全３品種で50データずつあることを意味している。
+
+ノードごと：
+1層目 ノード
+　・決定木の分岐条件はpetal width（花弁の長さ）が0.8(2.45)cm以下かどうか。
+　・対象データ数は全部で150個
+
+2層目 左ノード
+　・1層目の分岐条件が「True」 = 花弁の長さが0.8(2.45)cm以下
+　・50個のデータがこの条件で振り分けられた
+　・その全てがIris-Setosaの品種
+　・このノードは結果価値を示す最終地点の結果ノード（Terminal Node）
+
+2層目 右ノード
+　・1層目の分岐条件が「False」 = 花弁の長さが0.8(2.45)cmより大きい
+　・100個のデータがこの条件で振り分けられた
+　・そのうち50個がIris-versicolorで50個がIris-virginicaの品種
+　・このノードの分岐条件はpetal width（花弁の幅）が1.75cm以下かどうか
+
+3層目 左ノード
+　・2層目の分岐条件が「True」 = 花弁の幅が1.75以下
+　・54個のデータがこの条件で振り分けらした
+　・そのうち49個がIris-versicolorで、5個がIris-virginicaの品種
+　・このノードは結果価値を示す最終地点の結果ノード（Terminal Node）
+
+3層目 右ノード
+　・2層目の分岐条件が「False」 = 花弁の幅が1.75より大きい
+　・46個のデータがこの条件で振り分けられた
+　・そのうち45個がIris-virginicaで、1個がIris-versicolorの品種
+　・このノードは結果価値を示す最終地点の結果ノード（Terminal Node）
+
+
+セクション4 回帰木
+　回帰木」は各ノードに属するデータの平均値を出力。
+
+使用するデータ：
+　・「Diabetes Dataset（糖尿病のデータセット）」
+　・目的変数：糖尿病患者の1年後の疾患進行状況
+　・データは正規化されている
+　　元データ：https://www4.stat.ncsu.edu/~boos/var.select/diabetes.tab.txt
+　・特徴量（13種類）：
+　　・Age : 年齢
+　　・Sex : 性別
+　　・Body Mass Index : ボディマス指数（BMI）
+　　・Average blood pressure : 血圧平均
+　　・S1～S6 : 血液成分のデータ
+
+データ数：442
+
+結果の見方：
+　・決定木（DecisionTreeRegressor）ではMSE（平均二乗誤差）が指標として使われる。
+　・結果ノードが平均の値（value）で表示。
+
+
+chapter 3 ランダムフォレスト
+
+　・ランダムフォレストは「教師あり学習」の一つの手法。
+　・「決定木」を複数使って「森」とする手法。
+　・ランダムフォレストではこのように複数の決定木の分類結果を「多数決」して最終的な分類結果とする。
+　・ランダムフォレストも「分類」と「回帰」に適用が可能。
+　・回帰では多数決ではなく「平均値」を使う。
+　・複数の学習器（この場合は決定木）を組み合わせてより良い結果を得る手法を「アンサンブル学習」と呼ぶ。
+　・ランダムフォレストはバギングを用いた決定木のアンサンブル学習。
+　　機械学習上級者は皆使ってる？！アンサンブル学習の仕組みと3つの種類について解説します
+　　https://www.codexa.net/what-is-ensemble-learning/
+
+ランダムフォレストではそれぞれの決定木を作成する時の2つのポイント
+　・それぞれ異なるデータを使う
+　・それぞれ異なる特徴量を使う
+
+ランダムフォレストの特徴
+　・（その1）分類と回帰で使える。
+　・（その2）シンプルな構造で使いやすい。
+　・（その3）過学習しにくい。
+　・（その4）特徴量の重要性を確認できる。
+
+セクション4 ランダムフォレストで特徴選択
+
+使うデータセット：
+　・ワイン品質のデータセット
+　・各ワインの等級（class 0～2）を分類
+　・特徴量（13種類）
+　　・Alcohol : アルコール度数
+　　・Malic acid : リンゴ酸
+　　・Ash : 灰
+　　・Alcalinity of ash : アルカリ性灰
+　　・Magnesium : マグネシウム
+　　・Total phenols : フェノール類全量
+　　・Flavanoids : フラボノイド
+　　・Nonflavanoid phenols : 非フラバノイドフェノール類
+　　・Proanthocyanins : プロアントシアニジン
+　　・Color intensity : 色彩強度
+　　・Hue : 色調
+　　・OD280/OD315 of diluted wines : 蒸留ワインのOD280/OD315
+　　・Proline : プロリン
+
+データ数：178
+
+RandomForestClassifier(n_estimators=250, random_state=42):ランダムフォレストのモデル作成
+　・n_estimators：決定木の数
+　・random_state：シード
+　
+RF.feature_importances_：特徴量の重要度を取得
+
+map(function, sequence_object)：sequence_objectをfunctionに渡した実行結果を返す。
+　・function：実行する関数
+　・sequence_object：関数に渡すオブジェクトリスト
+
+chapter 4 決定木とランダムフォレストで分類
+
+使用するデータ：
+Breast Cancer Wisconsin (Diagnostic) Data Set | Kaggle
+https://www.kaggle.com/uciml/breast-cancer-wisconsin-data
+
+　・「ウィスコンシン乳がん診断（Breast Cancer Wisconsin Diagnostic)」
+　・患者の診断データから良性腫瘍（benign)か悪性腫瘍(malignant)を分類する。
+　・全部で569名の検診データがあり、そのうち良性（benign）は357名、悪性（malignant）は212名。
+　・ターゲットは「diagnosis」の列で値がM＝悪性、B＝良性
+　・穿刺吸引細胞診（FAN）と呼ばれる検診の結果をデジタル化した値。全部で31個。
+　・特徴量：
+　　・idID：number
+　　・diagnosis：The diagnosis of breast tissues (M = malignant, B = benign)
+　　　乳房組織の診断（M =悪性、B =良性）
+　　・radius_mean：mean of distances from center to points on the perimeter
+　　　平均中心から周囲の点までの距離
+　　・texture_mean：standard deviation of gray-scale values
+　　　グレースケール値の標準偏差
+　　・perimeter_meanmean size of the core tumor
+　　　コア腫瘍の周囲の平均サイズ
+　　・area_mean：エリア
+　　・smoothness_mean：mean of local variation in radius lengths
+　　　半径の長さの局所変動の平均
+　　・compactness_mean：mean of perimeter^2 / area - 1.0
+　　　平均周長^ 2 /面積-1.0
+　　・concavity_mean：mean of severity of concave portions of the contour
+　　　輪郭の凹面部分の重症度の平均
+　　・concave points_mean：mean for number of concave portions of the contour
+　　　輪郭の凹面部分の数の平均
+　　・symmetry_mean：対称
+　　・fractal_dimension_mean：mean for "coastline approximation" - 1
+　　　「海岸線近似」の平均-1
+　　・radius_se：standard error for the mean of distances from center to points on the perimeter
+　　　中心から境界上の点までの距離の平均の標準誤差
+　　・texture_se：standard error for standard deviation of gray-scale values
+　　　グレースケール値の標準偏差の標準誤差
+　　・perimeter_se：
+　　・area_se：
+　　・smoothness_se：standard error for local variation in radius lengths
+　　　半径の長さの局所変動の標準誤差
+　　・compactness_se：standard error for perimeter^2 / area - 1.0
+　　　境界の標準誤差^ 2 /面積-1.0
+　　・concavity_se：standard error for severity of concave portions of the contour
+　　　輪郭の凹面部分の重大度の標準誤差
+　　・concave points_se：standard error for number of concave portions of the contour
+　　　輪郭の凹面部分の数の標準誤差
+　　・symmetry_se：
+　　・fractal_dimension_se：standard error for "coastline approximation" - 1
+　　　「海岸線近似」の標準誤差-1
+　　・radius_worst："worst" or largest mean value for mean of distances from center to points on the perimeter
+　　　中心から周囲の点までの距離の平均の「最悪」または最大の平均値
+　　・texture_worst："worst" or largest mean value for standard deviation of gray-scale values
+　　　グレースケール値の標準偏差の「最悪」または最大の平均値
+　　・perimeter_worst
+　　・area_worst
+　　・smoothness_worst："worst" or largest mean value for local variation in radius lengths
+　　　半径の長さの局所変動の「最悪」または最大の平均値
+　　・compactness_worst："worst" or largest mean value for perimeter^2 / area - 1.0
+　　　「最悪」または境界の最大平均値^ 2 /面積-1.0
+　　・concavity_worst："worst" or largest mean value for severity of concave portions of the contour
+　　　輪郭の凹面部分の重症度の「最悪」または最大の平均値
+　　・concave points_worst："worst" or largest mean value for number of concave portions of the contour
+　　　輪郭の凹面部分の数の「最悪」または最大の平均値
+　　・symmetry_worst
+　　・fractal_dimension_worst："worst" or largest mean value for "coastline approximation" - 1
+　　　「海岸線近似」の「最悪」または最大平均値-1
+
+breastCancer_data.diagnosis.unique()：ユニーク値の確認
+
+breastCancer_data['diagnosis'].value_counts()：値ごとの数をカウント
+
+sns.distplot()
+
+
+Scikit-learnによるランダムフォレスト
+https://data-science.gr.jp/implementation/iml_sklearn_random_forest.html
+
