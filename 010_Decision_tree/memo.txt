@@ -249,9 +249,82 @@ breastCancer_data.diagnosis.unique()：ユニーク値の確認
 
 breastCancer_data['diagnosis'].value_counts()：値ごとの数をカウント
 
-sns.distplot()
+sns.distplot()：ヒストグラムの表示
+　・bins：x軸の刻み目の数
+　・
 
 
 Scikit-learnによるランダムフォレスト
 https://data-science.gr.jp/implementation/iml_sklearn_random_forest.html
+
+
+chapter 5 決定木とランダムフォレストで回帰
+使用するデータ：
+House Sales in King County, USA | Kaggle
+https://www.kaggle.com/harlfoxem/housesalesprediction/data#kc_house_data.csv
+
+　・アメリカワシントン州のキング郡（King County）内の不動産物件の価格
+　・2014年5月～2015年5月の一年間に売却された不動産物件の情報
+　・目的変数：price（住宅価格、3番目）
+　・特徴量：
+　　・id : 不動産物件の識別番号
+　　・date : 売却された日付
+　　・bedrooms : 寝室の数
+　　・bathrooms : トイレの数
+　　・sqft_living : 物件面積（平方フィート）。Sqft（平方フィート）。1平方フィートは約0.092平方メートル。
+　　・sqft_lot : 駐車場面積（平方フィート）
+　　・floors : 物件の階数
+　　・waterfront : 湖岸の景色の有無
+　　・view : 内見された数
+　　・condition : 物件のコンディション
+　　・grade : 物件のグレード（キング郡の評価に基づく）
+　　・sqft_above : 地上部広さ（平方フィート）
+　　・sqft_basement : 地下室広さ（平方フィート）
+　　・yr_built : 建造された年
+　　・yr_renovated : リフォームされた年
+　　・zipcode : 物件の郵便番号
+　　・lat : 物件の緯度
+　　・long : 物件の経度
+　　・sqft_living15 : 2015年の物件の広さ（リフォームを意味）
+　　・sqft_lot15 : 2015年の駐車場の広さ（リフォームを意味）
+
+データ数：21,613
+
+セクション2 評価方法
+ 　・「RMSE」を評価指標とする。
+ 　・RMSEとは、Root Mean Square Error(ルート・ミーン・スクエア・エラー）の略で日本語では「平均二乗誤差」と呼ばれる。
+ 　・RMSEは、残差（予測値と実際値の誤差）の標準偏差。
+ 　・RMSEの意味は「実際の値と予測した値がどれだけ離れているか」。
+ 　　・RMSE = sqrt(∑n=1 n(^yi - yi) ** 2 / n)
+
+セクション4 EDAとデータ前処理
+　・英語でExplanatory Data Analysisの略で「EDA」と呼ばれる
+
+pd.groupby('bedrooms', as_index=True)：指定した列でグルーピング
+
+sns.barplot(x=kchouse_m_bedrooms.index,y='price', data=kchouse_m_bedrooms, palette = 'viridis')：
+　ヒストグラムの表示
+
+sns.jointplot(x='price',y='sqft_basement', data = kchouse, kind = 'reg', size = 10, color = 'midnightblue'):
+　散布図の表示
+
+セクション5 特徴量エンジニアリング
+　（その１）リフォーム実施フラグ
+　（その2）物件面積の変化量
+　（その3）駐車場面積の変化量
+
+セクション6 特徴選択
+
+RandomForestRegressor(n_estimators=100, criterion='mse')：ランダムフォレスト
+　・n_estimators：決定木の数
+　・criterion：評価指標。mse は MSE（平均二乗誤差）のこと。
+
+セクション7 決定木で予測
+
+mean_squared_error(y_train, y_pred)：二乗和誤差
+
+セクション8 ランダムフォレストで予測
+
+
+
 
