@@ -1,0 +1,147 @@
+
+SVM(サポートベクターマシーン)についてまとめてみた - Qiita
+https://qiita.com/arata-honda/items/bc24cbd953bd9d2c743c
+
+scikit-learnでSVMのパラメータを調節してみた話 - Qiita
+https://qiita.com/arata-honda/items/8d08f31aa7d7cbae4c91
+
+chapter 2 SVMの概要
+
+セクション１　SVMとは
+　・Support Vector Machineを略してSVM（エス・ブイ・エム）
+　・日本語ではサポートベクターマシンまたはサポートベクトルマシン
+　・SVMは「教師あり学習」に属する機械学習の手法
+　・SVMは「分類」に対して非常に優れている。
+　・分類を行うSVMを特別に「サポートベクタークラシファイヤー（Support Vector Classifier）」
+　・回帰を行うSVMは「サポートベクターレグレッション（Support Vector Regression）」
+
+セクション２　SVMの仕組み
+　・「直線に最も近接するデータポイント」と「境界線」の距離が一番遠くなるようにする。
+　・SVMではデータを分類する際に「道の幅」が、「最も隣接するデータポイント」と、最大になるような「境界線」を求める。
+　・道幅 = マージン
+　・最も隣接するデータポイント = サポートベクター
+　・境界線 = ハイパープレイン（超平面）
+　・SVMとはデータを最も適切に分け隔てる「ハイパープレイン」を「サポートベクター」から最も遠くなる距離で導き出すことで最適な分類を行う手法
+　・「マージンの最大化を行う手法」
+
+セクション３　SVMのハイパーパラメータ
+　・SVMの重要なパラメータ
+
+　　C (Cパラメータ)：
+　　　CパラメータはSVMモデルに対して「分類ミスをどのくらい許容するか設定する値」。
+　　　Cパラメータが低い時はモデルは分類ミスを許容し、Cパラメータが高いと分類ミスを極力避ける。
+　　　Cパラメータが低い状態を「ソフトマージン」と呼び、高い状態は「ハードマージン」と呼ぶ。
+
+　　decision_function_shape（多項分類）：
+　　　多項分類を行う場合、予測精度に大きな影響を与える。
+　　　設定する値ですが「OVR」と「OVO」の2つ。
+　　　Scikit-learnでのデフォルトは「OVR」。
+　　　
+　　　「OVR」：
+　　　　OVRとは英語の「One vs Rest」の略で、日本語では「1対他分類法」。
+　　　　1つの分類クラスと「他の全ての分類クラス」でハイパープレインを導き出す。
+　　　　メリットとしてはSVMが構築するモデルの数が少なくてすむ。分類クラス数 - 1のモデル数が必要。
+　　　「OVO」：
+　　　　OVOは英語で「One vs One」の略で日本語では「1対1分類法」。
+　　　　各クラスと「別の1クラス毎」にハイパープレイン（境界線）を導き出す手法。
+　　　　クラス毎にハイパープレインを導き出し、最終的にそれらを合体させて分類モデルを構築する方法。
+　　　　全てのクラス毎にモデルを構築するため非常に高負荷な計算処理となる場合が多い。
+　　　　Σ1～n(k)の分類モデルを構築する必要がある。（10クラスなら45モデル）
+
+　　kernel (カーネル)
+　　　Kernel（カーネル）はSVMの最も特徴的かつ重要なポイント。
+　　　カーネルは英語では「Kernel Trick」とも呼ばれる。
+　　　「データに新たな次元を追加してハイパープレインを導き出す仕組み」。
+　　　元のデータは2次元のデータであればX軸とY軸のみとなるが、データに処理を行うことにより新たな次元（Z軸）を追加し分類する。
+　　　値は下記など。
+　　　　RBF（Radial Basis Function Kernel）：
+　　　　Linear：
+　　　　Poly：
+Plot different SVM classifiers in the iris dataset - scikit-learn 0.22.1 documentation
+https://scikit-learn.org/stable/auto_examples/svm/plot_iris_svc.html#sphx-glr-auto-examples-svm-plot-iris-svc-py
+
+　　gamma（ガンマ）
+　　　gamma（ガンマ）」とは、「モデルが訓練データへどれくらいフィットさせるかを調整する値」。
+　　　ガンマの値が高ければ高いほどデータに対してフィットする。
+　　　値が小さいと分類はシンプルなものになり、高いと複雑な分類になりやすい。
+　　　ガンマの値が高いと訓練データへの分類はより複雑化して細かい分類を行うが、「過学習」になりやすい。
+RBF SVM parameters - scikit-learn 0.22.1 documentation
+https://scikit-learn.org/stable/auto_examples/svm/plot_rbf_parameters.html#sphx-glr-auto-examples-svm-plot-rbf-parameters-py
+
+
+chapter 3  SVMの実装（基本編）
+
+セクション１　データセット
+使用するデータセット：
+　・「Iris（アイリス）」。3品種のアヤメの分類と特徴を示すデータ。
+　・特徴量：
+　　sepal length ：がく片の長さ(cm)
+　　sepal width  ：がく片の幅(cm)
+　　petal length ：花弁の長さ(cm)
+　　petal width  ：花弁の幅(cm)
+　・ターゲット
+　　Iris-Setosa     ：アイリスセトサ
+　　Iris-Versicolour：アイリスバージカラー
+　　Iris-Virginica  ：アイリスバージニカ
+　・データ数：150
+
+セクション３　データの読み込み
+　・datasets.load_iris()：アイリスデータセットの読み込み
+　・pd.DataFrame()：データフレームに変換
+　・train_test_split()：訓練データ、テストデータの分割
+
+セクション４　正規化
+　・Nomarlization（ノーマライゼーション）やFeature Scaling（フューチャー・スケーリング）。
+　・正規化とは「データのレンジを整える」。
+　・正規化のポイント
+　　（その1）正規化の役割は色々
+　　　SVMでは正規化は必要だが、正規化を必要としない手法/アルゴリズムもある。（例：ランダムフォレストなど）
+　　　最適化アルゴリズム「最急降下法（Gradient Descent）」では、計算処理の効率を改善するために特徴量の正規化を行う。
+　　（その2）予測/テストにも正規化する
+　　　予測を行う場合、それらのデータも「同等の手法で正規化」する。
+　　（その3）正規化の種類
+　　　「Z-score Normalization（ゼット・スコア・ノーマライゼーション）」
+　　　「min-max normalization（ミン・マックス・ノーマライゼーション）」
+　・StandardScaler()：各特徴量の平均値が0、標準偏差が1となるような処理を行う。
+
+セクション５　モデルの訓練
+　・clf = svm.SVC()：SVM
+　　scikit.learnでは分類に関するSVM
+　　・SVC：
+　　　　SVCは標準的なソフトマージン(エラーを許容する)SVM
+　　・LinearSVC：
+　　　　LinearSVCはカーネルが線形カーネルの場合に特化したSVMであり, 計算が高速だったり, 他のSVMにはないオプションが指定できたりする。
+　　・NuSVC：
+　　　　NuSVCはエラーを許容する表現が異なるSVM
+　・clf.fit()：モデルの訓練
+　・clf.predict()：モデルの予測
+
+セクション６　モデルの評価
+scikit-learnで混同行列を生成、適合率・再現率・F1値などを算出 | note.nkmk.me
+https://note.nkmk.me/python-sklearn-confusion-matrix-score/
+
+　・classification_report(y_train, y_pred_train, target_names=['0', '1', '2'])：評価指標をまとめて算出
+
+
+chapter 4 SVMの実装２
+
+使用するデータセット：
+　・「グール、ゴブリン、ゴースト...でたー!」
+　・ハロウィーン向けに機械学習での分類予測を行う目的で作成されたデータ。
+　・クリーチャーの髪の長さや色などから、3種類のクリーチャー（ゴースト/ゴブリン/グール）へ分類する。
+　・特徴量：
+　　　id : クリーチャーのID
+　　　bone_length : 骨の長さの平均値(0-1へ正規化済み)
+　　　rotting_flesh : 体の腐食した割合
+　　　hair_length : 髪の長さの平均値(0-1へ正規化済み)
+　　　has_soul : 魂の割合
+　　　color : クリーチャーの色（white, black, clear, blue, green, blood）
+　　・ターゲット：
+　　　Ghost : ゴースト
+　　　Goblin : ゴブリン
+　　　Ghoul : グール（屍食鬼）
+　・データ数：
+　　　訓練データ：371
+　　　テストデータ：529
+
+
