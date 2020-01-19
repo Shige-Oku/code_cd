@@ -103,15 +103,23 @@ chapter 3  SVMの実装（基本編）
 　　　「Z-score Normalization（ゼット・スコア・ノーマライゼーション）」
 　　　「min-max normalization（ミン・マックス・ノーマライゼーション）」
 　・StandardScaler()：各特徴量の平均値が0、標準偏差が1となるような処理を行う。
+　　　・fit()：
+　　　　渡されたデータの最大値、最小値、平均、標準偏差、傾き...などの統計を取得して、内部メモリに保存する。
+　　　・transform()：
+　　　　fit()で取得した統計情報を使って、渡されたデータを実際に書き換える。
+　　　・fit_transform()：
+　　　　fit()を実施した後に、同じデータに対してtransform()を実施する。
+scikit-learn の fit() / transform() / fit_transform() - Qiita
+https://qiita.com/makopo/items/35c103e2df2e282f839a
 
 セクション５　モデルの訓練
 　・clf = svm.SVC()：SVM
 　　scikit.learnでは分類に関するSVM
-　　・SVC：
+　　・svm.SVC()：
 　　　　SVCは標準的なソフトマージン(エラーを許容する)SVM
-　　・LinearSVC：
+　　・svm.LinearSVC()：
 　　　　LinearSVCはカーネルが線形カーネルの場合に特化したSVMであり, 計算が高速だったり, 他のSVMにはないオプションが指定できたりする。
-　　・NuSVC：
+　　・svm.NuSVC()：
 　　　　NuSVCはエラーを許容する表現が異なるSVM
 　・clf.fit()：モデルの訓練
 　・clf.predict()：モデルの予測
@@ -141,7 +149,61 @@ chapter 4 SVMの実装２
 　　　Goblin : ゴブリン
 　　　Ghoul : グール（屍食鬼）
 　・データ数：
-　　　訓練データ：371
-　　　テストデータ：529
+　　　訓練データ：371、正解ラベル付き
+　　　テストデータ：529、正解ラベルなし
+
+セクション4 散布図行列でデータ確認
+
+Python, pandas, seabornでペアプロット図（散布図行列）を作成 | note.nkmk.me
+https://note.nkmk.me/python-seaborn-pandas-pairplot/
+
+　・pg = sns.pairplot(data=train_set, hue='type')：散布図行列を表示
+　・pg.pairplot()：散布図行列をイメージ画像に保存
+
+セクション5 データの前処理
+　・カテゴリデータの「color（クリーチャーの色）」をダミー変数に変換。
+　・ダミー変数トラップへの対策としてダミー変数へ変換する段階で1つの値を意図的に除外する。
+　・ロジスティック回帰、k近傍法（k-NN）ではダミー変数トラップが必要。
+　・決定木やランダムフォレストでダミー変数トラップは不要。
+
+　・pd.get_dummies(train_set['color'], drop_first=True)：color 列の削除
+　・pd.merge(train_set, dummies_train, left_index=True, right_index=True)：データフレームのマージ
+　・pd.drop('type', axis=1)：列の削除
+　・pd.copy()：列のコピー
+
+セクション9 GridSearchCVでハイパーパラメーターチューニング
+
+予測精度の改善方法
+　・モデルの訓練に大きな影響を及ぼす特徴量に対して、適当な処理を加えて精度を改善する「特徴量エンジニアリング（Feature Engineering）」。
+　・モデルを見直す。
+　・ハイパーパラメータチューニング。「グリッドサーチ」を使用してみる。
+　　・グリッドサーチ：
+　　　グリッドサーチ（英：Grid Search）。
+　　　SVM以外でも使用可能。
+　　　何度も異なるパラメータの値を使いモデルを構築しては評価をし、最適なパラメータを探し出す作業を一括で実施。
+　　　計算コストが高くなり、大規模データや処理が重い手法などで行うと膨大な時間を要することもある。
+　　　Scikit-learnにはこのグリッドサーチを実践できる「GridSearchCV（読み：グリッド・サーチ・シーブイ）」が用意されている。
+　　　語尾の「CV」は「Cross-Validation（交差検証）」の略。
+　　　「Cパラメータ」「ガンマ」「カーネル」でやってみる。
+　　　=>
+　　　最適なパラメータ：{'C': 1, 'gamma': 0.0001, 'kernel': 'linear'}
+　　　正解率が 69.75% => 72.59%
+　　　訓練データでは正解率が下がった。
+
+　　・GridSearchCV(clf_2, param_grid, cv=5, scoring='accuracy')：
+　　　グリッドサーチの構築
+　　　　cv：交差検証の分割数
+　　　　scoring：評価基準。'accuracy'は正解率。
+　　・GridSearch.fit()：グリッドサーチの実行。多少時間かかる。
+　　・gridSearch.best_params_：最適と判断したパラメータ
+　　・gridSearch.best_estimator_：グリッドサーチで算出した最適なハイパーパラメータ
+
+　　・追加
+　　　decision_function_shapeを'OVR', 'OVO'で試したが、デフォルトの'OVR'が最適だった。
+　　　{'C': 1, 'decision_function_shape': 'OVR', 'gamma': 0.0001, 'kernel': 'linear'}
+
+結果コンペアにWinMergeをインストール
+WinMerge 日本語版（64bit版）のダウンロード - 窓の杜
+https://forest.watch.impress.co.jp/library/software/winmerge/download_11181.html
 
 
