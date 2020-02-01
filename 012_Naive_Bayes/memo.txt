@@ -1,0 +1,65 @@
+ナイーブベイズ
+
+セクション１　条件付き確率
+　・ナイーブベイズは「ベイズの定理(Bayes' theorem)」と呼ばれる、条件付き確率の定理が基となっている。
+　・条件確率とは「ある事象が起こるという条件のもとで、別のある事象が起こる確率」
+　　　・P( A | B )
+　　　　「 A | B 」は「Bが起きたという条件でAが起きる」を意味。
+　　　・P ( A | B ) = P ( A ∩ B ) /  P ( B )
+
+language-toolkit-nltk [Natural Language Toolkit（NLTK）
+　nltk モジュールのダウンロード
+　・nltk.download('stopwords')
+　・nltk.download('punkt')
+
+nltk.tokenize package - NLTK 3.4.5 documentation
+http://www.nltk.org/api/nltk.tokenize.html?highlight=punkt
+
+セクション２　ベイズの定理
+　ベイズの定理
+　　・P ( A | B ) = P ( B | A ) *  P ( A ) /  P ( B )
+
+セクション4 ナイーブベイズ
+　・ナイーブベイズは「単純ベイズ分類器（英：Naive Bayes Classifier）」とも呼ばれる。
+　・条件付き確率の性質でもある「ベイズの定理」を基とした手法
+　・ナイーブベイズは分類（Classification）のみであり回帰などに適用できない。
+　・ナイーブベイズは構造が単純。
+　・他の機械学習手法よりも計算コストが低い。
+　・Naiveとは日本語で「物事に感じやすいさま」
+　・「特徴量は独立で互いに相関がないと仮定」しているため「ナイーブ」と呼ばれる。
+　
+　・sklearn.naive_bayesには訓練データの特性に応じて3種類のナイーブベイズのアルゴリズムが実装されている。
+　　GaussianNB（ガウシアン・ナイーブベイズ）
+　　MultinomialNB（多項分布・ナイーブベイズ）
+　　BernoulliNB（ベルヌーイ・ナイーブベイズ）
+
+　・clf = GaussianNB()：ガウシアン・ナイーブベイズ
+　・clf.fit(ml_df['MinutesLate'].values.reshape(-1, 1), ml_df['LateTarget'])：訓練
+　・clf.predict_proba(ml_df['MinutesLate'].values.reshape(-1, 1))：'MinutesLate'クラスの確率取得
+　・clf.predict(ML['MinutesLate'].values.reshape(-1,1))：予測
+
+
+chapter 3
+
+セクション1 データセットについて
+　「Iris（アイリス）」
+　　・3品種のアヤメの分類と特徴を示すデータ
+　　特徴量：
+　　　・sepal length:がく片の長さ(cm)
+　　　・sepal width:がく片の幅(cm)
+　　　・petal length:花弁の長さ(cm)
+　　　・petal width:花弁の幅(cm)
+　　ターゲット：
+　　　・Iris-Setosa:アイリスセトサ
+　　　・Iris-Versicolour:アイリスバージカラー
+　　　・Iris-Virginica:アイリスバージニカ
+　　データ数：150
+
+
+chapter 4
+　テキスト分類
+　　・ウェブサイトのページを読み込んで「経済」「スポーツ」「美容」などのカテゴリへ分類
+　　・商品説明を読み込んで販売カテゴリへ分類
+　　・メールを読み込んで「通常」「スパム」へ分類
+
+
