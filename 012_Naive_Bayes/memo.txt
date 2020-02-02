@@ -62,4 +62,26 @@ chapter 4
 　　・商品説明を読み込んで販売カテゴリへ分類
 　　・メールを読み込んで「通常」「スパム」へ分類
 
+セクション1 データセットについて
+　カルフォルニア大学アーバイン校がKaggleで公開をしている「SMS Spam Collection Dataset（SMSのスパムを集めたデータセット）」
+　・ham : ハム（通常のメール）、spam : スパムメールの2種類のデータ
+　特徴量
+　　・v2 : smsメッセージ原文（英語）
+　ターゲット：
+　　・ham : ハム（通常のメール）
+　　・spam : スパムメール
+　データ数：5,572 メッセージ
 
+https://www.kaggle.com/uciml/sms-spam-collection-dataset
+
+セクション3 データの確認
+　spam.describe()：統計情報の確認
+　spam.isnull().sum()：各列の欠損値の確認
+
+セクション4 データの前処理
+　言語データの前処理
+　　・全ての文字列を小文字に変換する
+　　・句読点・記号を除外する
+　　・ストップワードを除外する
+
+　spam['SNS message'] = spam['SNS message'].apply(clean_message)：メッセージ列にclean_message()を実行
