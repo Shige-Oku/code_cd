@@ -85,3 +85,27 @@ https://www.kaggle.com/uciml/sms-spam-collection-dataset
 　　・ストップワードを除外する
 
 　spam['SNS message'] = spam['SNS message'].apply(clean_message)：メッセージ列にclean_message()を実行
+
+セクション5 Bag of Wordsへ変換
+　・機械学習アルゴリズムへ学習させるのに「Bag of Words（読み：バッグ・オブ・ワーズ、略：BoW）」を使用する。
+　・Bag of Wordsは下記の2つの処理をテキストデータに加える。
+　　・テキストデータに含まれる全ての単語を認識
+　　・一つの文章に単語が含まれている数をカウント
+
+　BoWへの変換
+　　・vectorizer = CountVectorizer()：CountVectorizerの生成
+　　・vectorizer.fit(text)：単語のベクトル化の学習
+　　・vectorrizer.vocabulary_：学習した単語とインデックス(の表示）
+　　・vector_1 = vectorrizer.transform([''.join(spam['SNS message'][4])])：単語を学習した内容でベクトル化（数値は単語の出現回数）
+　　・count = vectorrizer.fit_transform(train_set['SNS message']):学習
+
+　TF/IDF
+　from sklearn.feature_extraction.text import TfidfVectorizer
+　　vec_tfidf = TfidfVectorizer()：TfidfVectorizerの生成
+　　X = vec_tfidf.fit_transform(sample)：文章のベクトル化
+
+セクション6 モデルの訓練
+　・「多項分布・ナイーブベイズ（MultinomialNB）」を使用する。
+　　・classifier = MultinomialNB()：「多項分布・ナイーブベイズ（MultinomialNB）」の生成
+　　・classifier.fit(count, target_train)：学習
+
