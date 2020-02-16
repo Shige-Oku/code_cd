@@ -68,20 +68,23 @@ chapter 3 XGBoostの基本操作
 　　・Iris-Versicolour:アイリスバージカラー
 　　・Iris-Virginica:アイリスバージニカ
 　・データ数：150
+　・
 
 3.3. モデル訓練と評価
 　・DMatrix（読み：ディー・マトリックス）というデータ構造を使用。
 　・DMatrixを用いることでメモリ効率と訓練スピードを最適化することが可能。
+　　・d_train = xgb.DMatrix(X_train, label=y_train)：numpy=>DMarixに変換。
+　　・d_train.feature_names：特徴量の名称を確認
 　・XGBoost のハイパーパラメータ
 　　・max_depth : 決定木の最大の深さ
 　　・eta : 学習率
 　　・silent : 訓練中のメッセージ表示オプション（0=表示）
-　　・objective : 訓練タスクの目的
+　　・objective : 訓練タスクの目的「multi:softprob」softmax
 　　・num_class : ターゲットのクラス数
 　・xgb.train(param, d_train, num_boost_round)：XGBoostのモデル訓練
 　　・num_boost_round：反復回数。デフォルトは 10。
 　・xgboost_model.predict(d_train)：推測
-　・np.argmax(y_prob_train[0])：一番確率のインデクスを取得
+　・np.argmax(y_prob_train[0])：一番確率高いのインデクスを取得
 　
 3.4. Scikit-learn API
 　・Scikit-learn APIでは、Numpy配列のままモデル訓練を行うことが可能。
@@ -90,3 +93,175 @@ chapter 3 XGBoostの基本操作
 　・pd_DataFrame.vales：numpy 配列
 　・反復回数は n_estimators で、デフォルトは 100。
 
+
+chapter 4 問題提起とデータ
+　・コンクリートの配合から強度を推測する回帰問題。
+　・土木工学においてコンクリートは最も重要な素材の一つ。
+　・コンクリートのもつ「強度」がポイント。
+　・湿度や温度、コンクリート中の空気量などに影響。
+　・コンクリートの配合も強度の要因。
+　・コンクリート工場では「割り増し強度」と呼ばれる、強度のばらつきを考慮して製造する。
+　
+　データセット：「Concrete Compressive Strength Data Set」
+　　・特徴量
+　　　・cement : セメント（kg/m**3 立法メートル）
+　　　・Blast Furnance Slag : 高炉スラグ（kg/m**3）
+　　　・Fly Ash : フライアッシュ（kg/m**3）
+　　　・Water : 水（kg/m**3）
+　　　・Superplasticizer : 高流動化剤（kg/m**3）
+　　　・Coarse Aggregate : 粗骨材（kg/m**3）
+　　　・Fine Aggregate : 細骨材（kg/m**3）
+　　　・Age : 材齢（1～365日）
+　・ターゲット
+　　　・Concrete compressive strength : コンクリート圧縮強度（MPa）
+　・データ数：1,030
+
+4.3. 探索的データ解析（EDA）
+　・pd.corr()['Cement']['csMpa']：相関係数の表示
+　
+4.4. ベースラインモデルの訓練
+　・sqrt(mean_squared_error(y_test, y_pred_test))：RMSE、平均二乗和誤差
+
+4.5. ハイパーパラメータチューニング
+　・ハイパーパラメータチューニングには４つの方法がある。
+　　①手動でチューニング
+　　　・データの特性などを考えた上で、それぞれのハイパーパラメータを「手動」で確認する方法。
+　　　・「あたり」をつけてチューニングを行うため、深い知識と経験が必要。
+　　　・時間と手間がかかる。
+　　②グリッドサーチ
+　　　・ハイパーパラメータチューニングの手法として最も定番。
+　　　・調整したいハイパーパラメータの値の候補を設定し、それらの候補で全ての組み合わせのモデリングを行う。
+　　　・最もスコアが高い組み合わせを探す手法。
+　　　・システム的にモデル評価を行える。
+　　　・計算コストは非常に高い。
+　　③ランダムサーチ
+　　　・設定したハイパーパラメータの全パターンのモデルを作り検証を行う。
+　　　・「ランダム」に調整したい値のパターンを作成して検証。
+　　　・扱うデータサイズが大規模な場合などに使われる手法。
+　　④ベイズ最適化
+　　　・HyperoptというPythonライブラリを使うと比較的簡単に実装可能。
+　　　http://proceedings.mlr.press/v28/bergstra13.pdf
+
+　・XGBBoostのハイパーパラメータは３つの種類に分類。
+　　①「一般的なパラメータ（General Parameters）」：
+　　　・XGBoostのブースティングの方法を指定するパラメータ。
+　　　・決定木（gbtree）や線形モデル(gblinear)を設定することが可能。
+　　②「ブースターパラメータ（Booster Parameters）」：
+　　　・ブースティングのより細かい設定を行うパラメータ
+　　③「学習タスクパラメータ（Learning Task Parameters）」
+　　　・XGBoostの学習目標（learning objective）を設定する。
+　　
+　・XGBClassifierのハイパーパラメータ
+　　・n_estimators ：
+　　　・XGBoost内で使う決定木の数を指定する。
+　　　・一般的にn_estimatorsは50～200を初期値として、チューニングを行う。
+　　　・デフォルト値は100。
+　　・max_depth：
+　　　・決定木の最大の深さを設定する値。
+　　　・一般的な値として3～10が多い。
+　　　・max_depthを調整することで過学習（Overfitting）をコントロールする事が可能
+　　・min_child_weight：
+　　　・子ノードに置ける必要な最小の重み。
+　　　・決定木が枝分かれする際に、ノードの重み（Weight）の合計値がmin_child_weightより小さい場合は枝分かれをし、それ以上は行わない。
+　　　・過学習をコントロールするハイパーパラメータで、この値を高くすると特徴量の局所的な学習を防げる。
+　　　・値が高すぎると逆に未学習（Underfitting)になる。
+　　　・デフォルトは1。
+　　・Gamma ：
+　　　・枝分かれに必要な最低限の損失関数の減少を決める値。
+　　　・ammaの値が大きいとアルゴリズムはより保守的に働く。
+　　　・デフォルトは0。
+　　・subsample ：
+　　　・XGBoostで構築される決定木に使われるデータを制御する。
+　　　・勾配ブースティンの各ステージで訓練データの一部を使うようコントロールする。
+　　　・subsampleが0.5の場合は、各ステージで訓練データの「半分」をランダムに選択して訓練を行う。
+　　　・subsampleの値が低いとアルゴリズムはより保守的になり過学習を防ぐことが可能。
+　　・colsample_bytree ：
+　　　・XGBoostの各ステージで使われる特徴量の制御を行う。
+　　　・値が低いとアルゴリズムは保守的になるため過学習を防ぐ効果がある。
+　　　・デフォルトは1。
+　　・reg_alpha：
+　　　・L1正則化（英：L1 Regularization）の重みを制御する。
+　　　・値を高く設定すると過学習を防ぐ効果がある。
+　　　・デフォルトは0。
+　　・reg_lambda：
+　　　・L2正則化（英：L2 Regularization）の重みを制御する。
+　　　・過学習を調整。
+　　　・デフォルトは0。
+　　・learning_rate：
+　　　・XGBoostの学習率を設定。
+　　　・勾配ブースティングの各ステージで特徴量の重みを縮小させる度合いの調整を行う値。
+　　　・デフォルトは0.3。
+　　
+
+4.6. GridSearchCV
+　・グリッドサーチは調整したい値の全てのコンビネーションのモデル訓練を行う。
+　・計算コストが非常に高く、交差検証を完了するまでに時間がかかる。
+　・扱っているデータの特性や種別に応じて調整方法は異なる。
+　・ハイパーパラメータチューニングは「手探り」が前提となるタスク。
+
+調整その1 - 木の本数を最適化
+　・決定木の本数（n_estimators）を調整。
+　・GridSearchCV(estimator=XGBRegressor(seed=42), scoring='explained_variance', param_grid=test_params, return_train_score=False)：GridSearchCV
+　・GridSearchCV.fit(X_train, y_train)：訓練
+　・GridSearchCV.best_params_：もっともスコアの高いパラメータの確認
+　・GridSearchCV.cv_results_：交差検証の結果を辞書型で返却
+　・results1['mean_test_score']：
+　・グリッドサーチCVのデフォルトのスコアは「explained variance」と呼ばれる指標が使われる。
+　・「explained variance」は0～1の間で値をもち、1に近づくほどモデルの評価が高い
+
+調整その2 - 木の層数を最適化
+　・max_depth（決定木の最大の深さを設定する値）とmin_child_weight（子ノードに置ける必要な最小の重み）を調整。
+　・max_depth：
+　　・max_depthは決定木の「深さ」。
+　　・決定木の層数を決める値。
+　　・定木は深くなればなるほど、より限定的な特徴量を学習する。
+　　・深すぎると過学習（overfitting）に繋がり、浅すぎると未学習（underfitting）になる。
+　・min_child_weight：
+　　・決定木の「深さ」に関係のあるハイパーパラメータ。
+　　・決定木が次の層へ枝分かれする際の「重み」に基準を設けて制御する。
+　　
+
+調整その3 ガンマ値の最適化
+　・「gamma（読み：ガンマ）」の値を検証。
+　・決定木の枝分かれをコンロールするハイパーパラメータ。
+　・デフォルトは0。
+
+調整その4 データサンプリングの調整
+　・subsampleは訓練データの「数」をコントロールする。
+　・「colsample_bytree」は特徴量のサンプリングを制御する。
+　・subsampleとcolsample_bytreeのデフォルトの値は「1」。
+　・GridSearchCV.best_score_：もっともよいスコアの表示。
+
+調整その5 正則化の調整
+　・reg_alphaはL1正則化の重みを制御。
+　・reg_lambdaはL2正則化の重みを制御。
+　・デフォルトではreg_alphaは0、reg_lambdaは1となってる。
+
+調整その6 学習率の調整
+　・
+
+chapter 5 XGBBoostとほかの手法の比較
+　・ガラスに含まれる酸化物データから7種類のガラス分類を行う。
+　・データセット：「Can you correctly identify glass type?」
+Glass Classification | Kaggle
+https://www.kaggle.com/uciml/glass
+　　・特徴量：
+　　　・RI : 屈折率
+　　　・Na : ナトリウム
+　　　・Mg : マグネシウム
+　　　・Al : アルミニウム
+　　　・Si : シリコン
+　　　・K : カリウム
+　　　・Ca : カルシウム
+　　　・Ba : バリウム
+　　　・Fe : 鉄
+　　・ターゲット：
+　　　・1 : building_windows_float_processed（窓ガラス フロート）
+　　　・2 : building_windows_non_float_processed （窓ガラス ノンフロート）
+　　　・3 : vehicle_windows_float_processed （自動車ガラス フロート）
+　　　・4 : vehicle_windows_float_processed （自動車ガラス ノンフロート）
+　　　・5 : containers （容器ガラス）
+　　　・6 : tableware （食器ガラス）
+　　　・7 : headlamps （ヘッドランプ）
+　　・データ数：214
+　
