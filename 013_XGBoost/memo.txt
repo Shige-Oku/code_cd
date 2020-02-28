@@ -120,6 +120,7 @@ chapter 4 問題提起とデータ
 　・pd.corr()['Cement']['csMpa']：相関係数の表示
 　
 4.4. ベースラインモデルの訓練
+　・まずはデフォルトで訓練しベースラインを決める。
 　・sqrt(mean_squared_error(y_test, y_pred_test))：RMSE、平均二乗和誤差
 
 4.5. ハイパーパラメータチューニング
@@ -168,7 +169,7 @@ chapter 4 問題提起とデータ
 　　　・デフォルトは1。
 　　・Gamma ：
 　　　・枝分かれに必要な最低限の損失関数の減少を決める値。
-　　　・ammaの値が大きいとアルゴリズムはより保守的に働く。
+　　　・Gammaの値が大きいとアルゴリズムはより保守的に働く。
 　　　・デフォルトは0。
 　　・subsample ：
 　　　・XGBoostで構築される決定木に使われるデータを制御する。
@@ -264,4 +265,47 @@ https://www.kaggle.com/uciml/glass
 　　　・6 : tableware （食器ガラス）
 　　　・7 : headlamps （ヘッドランプ）
 　　・データ数：214
-　
+
+　・pd.['Type'].value_counts()：各値の数
+　・sns.pairplot(glass[['RI', 'Na', 'Mg', 'Al', 'Type']], hue='Type')：散布図。hue='Type'を使用して色分け。
+Python, pandas, seabornでペアプロット図（散布図行列）を作成 | note.nkmk.me 
+https://note.nkmk.me/python-seaborn-pandas-pairplot/
+　・sns.pairplot(df).savefig('data/dst/seaborn_pairplot_default.png')：表示したグラフの保存。
+　・sns.pairplot(df, hue='species', palette='Blues').savefig('data/dst/seaborn_pairplot_palette.png')
+　　カテゴリの色を指定: 引数palette。
+　　カラーマップ名
+　　　Choosing Colormaps in Matplotlib - Matplotlib 3.1.3 documentation
+　　　https://matplotlib.org/tutorials/colors/colormaps.html
+　・sns.pairplot(df, hue='species',
+             palette={'setosa': 'red',
+                      'versicolor': '#00ff00',
+                      'virginica': 'blue'}).savefig('data/dst/seaborn_pairplot_palette_dict.png')
+　　色の個別指定。
+　・sns.pairplot(df, hue='species',
+             vars=['sepal_length', 'sepal_width']).savefig('data/dst/seaborn_pairplot_vars.png')
+　　グラフ化する列を指定: 引数vars, x_vars, y_vars
+
+Seabornの全メソッドを解説（その１：グラフ一覧） | 自調自考の旅
+https://own-search-and-study.xyz/2017/05/02/seaborn%E3%81%AE%E5%85%A8%E3%83%A1%E3%82%BD%E3%83%83%E3%83%89%E3%82%92%E8%A7%A3%E8%AA%AC%EF%BC%88%E3%81%9D%E3%81%AE%EF%BC%91%EF%BC%9A%E3%82%B0%E3%83%A9%E3%83%95%E4%B8%80%E8%A6%A7%EF%BC%89/
+
+　・箱ひげ図とはデータの「ばらつき」を分かりやすく表現するためのグラフ。「箱ひげ図（英：Box Plot）」
+　・箱ひげ図にはデータの最大値、最小値に加えて「四分位数」が含まれる。
+　・四分位数とはデータを小さい順に並べて下から25%（第１四分位数）、50%（第２四分位数）、75%（第３四分位数）に区切る。
+　・boxprotの四分位数
+　　・ステップ１：データを小さい順にソート
+　　・ステップ２：データの個数から１引いた値に、25%, 50%, 75%の値をかける
+　　・ステップ３：①整数NならN+1番目の四分位数
+　　　　　　　　　②N + 0.25 なら N+1番目の0.75倍、N+2番目の0.25倍の合計
+　　　　　　　　　③N + 0.5  なら N+1番目の0.5倍、 N+2番目の0.5 倍の合計
+　　　　　　　　　④N + 0.75 なら N+1番目の0.25倍、N+2番目の0.75倍の合計
+　・第１四分位数～第３四分位数でそれぞれ四分位数を求める。
+　・IQR（英：Interquartile range）は四分位範囲。データの散らばりの度合いを示す指標の一つ。
+　　第３四分位数 - 第１四分位数
+　・外れ値（英：Outlier）とはデータの分布において他のデータから大きく外れた値。
+　・外れ値は計測機器の故障や測定のミスなど、様々な要因で発生する。
+　・一般的な箱ひげ図の作図を行う場合の外れ値
+　　最大値 =: 第３四分位数 + 1.5 * IQR 以下の中で最大値
+　　最小値 =: 第１四分位数 - 1.5 * IQR 以上の中で最小値
+　・sns.boxplot(y =box_num, linewidth=0.5 ).set_yticks(ylabel.tolist())：箱ひげ図
+　・sns.swarmplot(y=box_num, color='green')：重複しないようにポイント調整
+
