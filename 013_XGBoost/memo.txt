@@ -295,9 +295,9 @@ https://own-search-and-study.xyz/2017/05/02/seaborn%E3%81%AE%E5%85%A8%E3%83%A1%E
 　　・ステップ１：データを小さい順にソート
 　　・ステップ２：データの個数から１引いた値に、25%, 50%, 75%の値をかける
 　　・ステップ３：①整数NならN+1番目の四分位数
-　　　　　　　　　②N + 0.25 なら N+1番目の0.75倍、N+2番目の0.25倍の合計
-　　　　　　　　　③N + 0.5  なら N+1番目の0.5倍、 N+2番目の0.5 倍の合計
-　　　　　　　　　④N + 0.75 なら N+1番目の0.25倍、N+2番目の0.75倍の合計
+　　　　　　　　　②N+0.25 なら N+1番目の0.75倍、N+2番目の0.25倍の合計
+　　　　　　　　　③N+0.5  なら N+1番目の0.5 倍、N+2番目の0.5 倍の合計
+　　　　　　　　　④N+0.75 なら N+1番目の0.25倍、N+2番目の0.75倍の合計
 　・第１四分位数～第３四分位数でそれぞれ四分位数を求める。
 　・IQR（英：Interquartile range）は四分位範囲。データの散らばりの度合いを示す指標の一つ。
 　　第３四分位数 - 第１四分位数
@@ -308,4 +308,44 @@ https://own-search-and-study.xyz/2017/05/02/seaborn%E3%81%AE%E5%85%A8%E3%83%A1%E
 　　最小値 =: 第１四分位数 - 1.5 * IQR 以上の中で最小値
 　・sns.boxplot(y =box_num, linewidth=0.5 ).set_yticks(ylabel.tolist())：箱ひげ図
 　・sns.swarmplot(y=box_num, color='green')：重複しないようにポイント調整
+
+5.4. 機械学習手法を比較
+　・ロジスティック回帰：
+　　デフォルトで訓練
+　　LR = LogisticRegression(random_state=42)
+　　LR.fit(X_train, y_train)：訓練
+　　LR_test = LR.predict(X_test)：予測
+
+　・ランダムフォレスト
+　　ハイパーパラメータでかわるので、ある程度最初にグリッドサーチで交差検証する。
+　　RF = RandomForestClassifier(random_state=42)
+　　RF_CV = GridSearchCV(estimator=RF, param_grid=param_grid, cv=5)
+　　RF_CV.fit(X_train, y_train)
+　　RF_CV.best_params_：最適なパラメータ
+　　RF_test = RF_CV.predict(X_test)
+
+　・サポートベクターマシン（Support Vector Machin：SVM)
+　　重要なハイパーパラメータがあるため、最初に交差検証。
+　　SV = SVC(random_state=42)
+　　SV_CV = GridSearchCV(estimator=SV, param_grid=param_grid_SV, cv=5)
+　　SV_CV.fit(X_train, y_train)
+　　SV_test = SV_CV.predict(X_test)
+
+　・ナイーブベイズ
+　　Scikit-learnには「GaussianNB（ガウス分布ナイーブベイズ）」、「BernoulliNB（ベルヌーイ分布ナイーブベイズ）」、「MultinomialNB（多項分布ナイーブベイズ）」の3種類が実装。
+　　今回は「GaussianNB（ガウス分布ナイーブベイズ）」を使用。
+　　ハイパーパラメータが少ないのでデフォルトで検証。
+　　NB = GaussianNB()
+　　NB.fit(X_train, y_train)
+　　NB_test = NB.predict(X_test)
+　　
+
+　・XGBoost
+　　警告を非表示にする
+　　　import warnings
+　　　warnings.simplefilter('ignore', DeprecationWarning)
+　　XGB = xgb.XGBClassifier(random_state=42)
+　　XGB_CV = GridSearchCV(estimator=XGB, param_grid=param_grid_XGB, cv=5)
+　　XGB_CV.fit(X_train, y_train)
+　　XGB_test = XGB_CV.predict(X_test)
 
