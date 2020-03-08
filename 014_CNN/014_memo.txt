@@ -1,0 +1,107 @@
+
+MNISTデータセット + Kerasを使ってCNNを構築
+　・コンピュータービジョンとは「人間が行うのと同じ方法でコンピューターが画像を見たり、識別したり、処理することを可能にするコンピューターサイエンスの分野」
+　・コンピュータービジョンを活用した一つの事例として、画像分類問題がある。
+　・MNISTデータセット
+　　・「MNIST（エムニスト）」
+　　・0から9までの70,000個の手書き数字の画像から構成されている。
+　　【24個掲載】機械学習で使えるデータセット一挙勢揃い！
+　　https://www.codexa.net/ml-dataset-list/
+　・画像データ
+　　・「高さ x 幅 x チャンネル」の行列形式
+　　・画像には1チャンネルまたは3チャンネルがある。
+　　・3チャンネルとは「赤」「緑」「青」の各色情報。RGBカラー。
+　　・ピクセルの値は0-255のレンジ。
+　・ニューラルネットと畳み込みニューラルネットワーク
+　　・CNN（Convolutional Neural Network - 畳み込みニューラルネットワーク）。
+　　・ニューラルネットワークとは、「人間の脳の構造を模したコンピューターシステム」。
+　　・CNNは画像認識及び分類において極めて良好に機能するニューラルネットワーク。
+　・Keras（ケラス）
+　　・KerasはPythonで描かれたディープラーニングラリブラリ・
+　　・TensorFlow（テンソルフロー）やTheano（テアノ）の上で実行可能な高水準のニューラルネットワークAPI。
+　　・非常に簡単かつ高速にニューラルネットワークを構築することが可能。
+　　
+　・X_train = X_train.astype('float32')：データタイプ変換
+　・y_train = np_utils.to_categorical(y_train, 10)：カテゴリカル変数に変換（one-hot）
+　
+　・model = Sequential()：モデルの生成
+　・model.add()：レイヤーの追加
+　・model.compile()：コンパイル。どのような学習処理を行うか設定する。
+　・model.fit(X_train, y_train, epochs=10)：モデルの訓練
+　・loss_and_metrics = model.evaluate(X_test, y_test, batch_size=128)：モデルの評価
+　・predictions = model.predict_classes(X_test)：予測
+　
+　・環境
+　　・Theanoインストール
+　
+実践チュートリアル はじめての画像認識
+　・環境
+　　・OpenCVインストール
+　・画像認識とは
+　　・画像認識(Image Recognintion）。
+　　・画像認識は「コンピュータビジョン」の一部の分野。
+　　・コンピュータビジョン（Computer vision）とは、コンピュータに画像や動画を入力して、必要な情報（顔認識や物体検知）を取り出す技術。
+　　・コンピュータービジョンは、イベント検知や動画内の特定オブジェクトを追跡するビデオトラッキングなども含まれる。
+　　・画像認識技術
+　　　・自動画像整理機能
+　　　　・「Enhanced Sharing」など。
+　　　・画像検索
+　　　　・「カーセンサー 中古車検索アプリ」など。
+　　　・画像認識による医療診断
+　　　　・「糖尿病性網膜症」の前兆検知など。
+　　　・自動車安全装備
+　　　　・画像認識プロセッサ「Viscontiシリーズ」など。
+
+　・OpenCV 概要
+　　・画像ライブラリ　「Pillow」、「OpenCV」、「Scikit-image」。
+　　・OpenCVとは「Open Source Computer Vision Library」の略。日本語では「オープン・シー・ビー」。
+　　・1999年から開始したプロジェクトで、インテルが開発・公開してオープンソース化
+　　・画像処理、高度なパターン認識や物体検出、さらにk近傍法やSVMなどの機械学習手法も実装されている。
+　　・rgb = cv2.imread('img_sample.jpg', 1)：画像読み込み
+　　　・ファイルパス名、読み込み方法
+　　　・読み込み方法
+　　　　1：1 : 3チャンネルカラー画像（アルファチャンネルなし）
+　　　　0 : グレースケール画像
+　　　　-1 : 画像そのまま（アルファチャンネルあり）
+　　　　アルファチャンネルとは各ピクセルに対して色表現とは別に画素の不透明度を表現したチャンネル.
+　　　・画像データが何かしらの理由で読み込めない場合、NoneTypeを戻す。（ファイル無しなど）
+　　　・imreadの対応しているフォーマット
+　　　　・.bmp / .dib
+　　　　・.jpeg / .jpg / .jpe
+　　　　・.jp2
+　　　　・.png
+　　　　・.webp
+　　　　・.pbm / .pgm / .ppm
+　　　　・.sr / .ras
+　　　　・.tiff / .tif
+　　・logo = cv2.cvtColor(logo, cv2.COLOR_BGR2RGB)：GBR=>RGBに変換
+　　・cat_blur1 = cv2.blur(cat, (5, 5))：ぼかし。ブラー。
+
+　　・エッジ検出
+　　　・エッジ検出（Edge Detection）
+　　　・エッジ検出とは画像処理で使われる特徴抽出手法の一種。
+　　　・画像の基本的な構造を概ね保持したまま処理するピクセル数を削減。
+　　　・cat2_edge1 = cv2.Canny(cat2_rgb, 5, 50)：エッジ検出。
+
+　　・画像の操作
+　　　・cv2.imread()で読み込んだ画像データはNumpy配列。
+　　　・スライシングやインデックス参照を使って、特定の箇所を抽出することが可能。
+　　　・cat4_circle = cv2.circle(cat4_rgb, (240, 340), 50, color=(255, 0, 0), thickness=3)：画像に丸を追加。
+　　　　・第一引数 : 画像
+　　　　・第二引数 : 丸の中心
+　　　　・第三引数 : 丸の半径
+　　　　・第四引数 : 丸の色
+　　　　・第五引数 : 丸の太さ
+　　　・cat5_text = cv2.putText(cat5_rgb, "codexa", org=(300, 100), fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=2,
+                                color=(0, 150, 0), thickness=5)：画像にテキスト文字の追加
+
+　・MNIST
+　　・MNISTとはModified National Institute of Standards and Technology databaseの略。
+　　・MNISTデータセット
+　　　・画像データ 70,000画像
+　　　・28 x 28のグレースケール画像
+　　　・0～9まで数字が手書きで描かれている
+　　　・画像数字を示すラベルが付与されている
+　　
+　　・np.array(np.unique(y_train, return_counts=True)).astype(int)：ユニーク値の分布。
+　　

@@ -59,3 +59,6 @@ chapter 8
 外れ値の求め方
   外れ値 < Q1 - 1.5 * IQR or Q3 + 1.5 * IQR < 外れ値
 
+# percentile
+basket_q75, basket_q25 = np.percentile(basket, [75, 25])
+

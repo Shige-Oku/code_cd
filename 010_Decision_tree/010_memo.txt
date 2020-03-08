@@ -36,7 +36,7 @@ chapter 2 決定木の概要
 
 tree.DecisionTreeClassifier()：分類の決定木
 
-tree.DecisionTreeRegressor()：分類の決定木
+tree.DecisionTreeRegressor()：回帰の決定木
 
 graph で可視化すると下記エラーが出る。
 ExecutableNotFound: failed to execute ['dot', '-Tsvg'], make sure the Graphviz executables are on your systems' PATH
@@ -102,7 +102,7 @@ ExecutableNotFound: failed to execute ['dot', '-Tsvg'], make sure the Graphviz e
 
 
 セクション4 回帰木
-　回帰木」は各ノードに属するデータの平均値を出力。
+　「回帰木」は各ノードに属するデータの平均値を出力。
 
 使用するデータ：
 　・「Diabetes Dataset（糖尿病のデータセット）」
