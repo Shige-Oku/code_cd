@@ -104,4 +104,171 @@ MNISTデータセット + Kerasを使ってCNNを構築
 　　　・画像数字を示すラベルが付与されている
 　　
 　　・np.array(np.unique(y_train, return_counts=True)).astype(int)：ユニーク値の分布。
+　
+　機械学習で画像認識
+　　・ロジスティック回帰
+　　　・「分類問題に対する確率論的アプローチ」。
+　　　・目標は、 サンプルが特定のカテゴリやクラスに属する「確率」をモデル化すること。
+　　　・特徴
+　　　　・シンプルな構造で推測結果の「説明」が比較的容易
+　　　　・ハイパーパラメータチューニングが（ほぼ）不要
+　　　　・線型性を仮定
+　　・SVM（サポートベクターマシン）
+　　　・サポートベクターマシン（Suport Vector Machine）
+　　　・SVMは回帰・分類ともに行える。
+　　　・特に分類の推測精度が高い。
+　　　・カーネル法と呼ばれる手法が特徴的。
+　　・ランダムフォレスト
+　　　・「決定木」を複数使って「森」とする手法
+　　　・複数の決定木モデルを構築して、それらを一つにまとめて、より正確かつ質の高い予測（分類）を行う手法
+　　　・複数の弱いモデル（弱学習器）を一つにまとめる手法を「アンサンブル学習」と呼ぶ。
+　　　・ランダムフォレストは「バギング」に属するアンサンブル学習の手法
+　
+　畳み込みニューラルネットワーク
+　　・畳み込みニューラルネットワークは英語で「Convolutional Neural Network（読み：コンボリューショナル・ニューラル・ネットワーク）」
+　　・CNNは画像データの数列から特定の形状を検出して、オブジェクトを認識して分類
+　　・画像認識や画像オブジェクト検知など幅広い分野で活用される機械学習手法
+　　・原型とも言われるのが「LeNet-5（レネット）」
+　　・2012年に画像コンテストで圧倒的な推測精度を叩き出してAIブームの火付け役となったのは「AlexNet（アレックスネット）」
+　　・CNNは下記の3つの構造からなる（前に入力層、最後に出力層）
+　　　・畳み込み層(Convolution Layer)
+　　　・プーリング層(Pooling Layer)
+　　　・全結合層（Fully Connected Layer）
+　　・入力層
+　　　・CNNでは常に入力層から始まる
+　　・畳み込み層
+　　　・畳み込み層は入力された画像データの「特徴」を抽出する層
+　　　・畳み込み層では入力層よりデータサイズが畳み込まれる（小さくなる）
+　　　・元画像から「特徴」が抽出されたデータを特徴マップ（Feature Map）と呼ぶ
+　　・プール層
+　　　・畳み込み層で抽出された特徴マップを、より扱いやすくするため情報を圧縮
+　　・全結合層
+　　　・プール層で圧縮された特徴マップを平らにしてベクトルとして扱う（一次元にする）
+　　　・出力層の手前で処理を行うことが多い
+　　　・今ままでの処理で抽出された特徴の組み合わせから推測結果に分類するための処理を行う
+　　　・一般的なニューラルネットワークの隠れ層と役目は一緒
+　　　・特徴マップを平らにして重みを最適化
+　　・出力層
+　　　・活性化関数（例：シグモイド関数やソフトマックス関数）を使い、最終的な分類への出力を行う
+　　　・出力層ではそれぞれのクラスに属する確率などをモデルの推測結果として出力する
 　　
+　　・畳み込み層
+　　　・画像データから「特徴」を抽出するのが主な役割
+　　　・「フィルタ（またはカーネル）」と呼ばれる小さい数列を適用して画像の特徴を抽出
+　　　・元画像に対してフィルタが全てのピクセルにスライドするように処理を行う
+　　　・入力画像とフィルタで内積をとる
+　　　・特徴マップのサイズ
+　　　　・入力数 - フィルタサイズ + 1（パディングサイズ考慮無し）
+　　　・ストライドとはフィルタが「幾つスライドするかを指定する値」
+　　　・「ゼロパディング（Zero Padding）」画像を取り囲むように0でパディングする
+　　　・ストライドを、パディングを考慮した特徴マップサイズ
+　　　　・元画像サイズ = ( h * W )、ストライド = S、パディング = P、フィルタサイズ = ( Fh, Fw )、出力サイズ = ( Oh * Ow)
+　　　　・Oh = (h + 2P - Fh) / S + 1
+　　　　・Ow = (W + 2P - Fw) / S + 1
+　　　・畳み込み層で適用するフィルタの数は設計者（エンジニア）が決定
+　　　・フィルタのパラメータを学習して調整。設計者が決める必要はない。
+　　　・入力とフィルタで内積をとった値で活性化関数を通す
+　　　・「ReLu」と呼ばれる活性化関数を使用するのが一般的（ReLuとはRectified Linear Unitの略）
+　　　
+　　・プール層
+　　　・一般的なCNNでは畳み込み層の次にプール層の処理を行う
+　　　・畳み込み層の特徴マップをさらに小さく圧縮させる処理を行う
+　　　・プール層の目的
+　　　　・計算コストを下げる
+　　　　・過学習を防ぐ
+　　　・圧縮方法
+　　　　・Max Pooling
+　　　　・Average Pooling
+　　　　・Sum Pooling
+　　　・一般的にはMax Poolingを使用
+　　　・「プールサイズ」としてエンジニアが設定する
+　　　
+　　・全結合層
+　　　・今まで処理を行ってきたユニットを全て「結合させる」層
+　　　・出力層の手前で全結合層の処理を行う
+　　　・最終的な推測を出力する前に、従来のニューラルネットワークのように全てのユニットを結合して重みを与えて最適化を行う
+　　　・一般的なニューラルネットワークと同様に活性化関数を使用
+　　
+　　出力層
+　　　・出力層では分類を行うクラスの数と一致している必要がある
+　　　・出力層でも活性化関数を使用
+　　　・分類クラスが3つ以上の場合はSoftmax関数
+　　　・二項分類の場合、出力層は1となる場合はSigmoid関数
+　
+　CNNで画像認識
+　　・Kerasには「channels_last（初期値）」と「channles_first」の2種類のデータフォーマットが用意されている
+　　　・channels_last = (batch, height, width, channels)
+　　　・channels_first= (batch, channels, height, width)
+　　　・デフォルトはchannels_last
+　　・ターゲットデータを、Kerasではクラスベクトルと呼ばれる、バイナリーのクラス行列へ変換する必要がある
+　　・np_utils.to_categorical()：カテゴリカル変数、one-hotベクトルに変換
+　　・model = Sequential()：モデルのインスタンス生成
+　　・畳み込み層の追加
+　　    model.add(Conv2D(8, kernel_size=(3, 3),  フィルタ数、フィルタサイズ
+                 activation='relu',            活性化関数
+                 input_shape=(28, 28, 1)))     入力形式
+　　・プール層の追加
+　　　  model.add(MaxPooling2D(pool_size=(2, 2)))  プーリングサイズ
+　　・ドロップアウト
+　　    model.add(Dropout(0.25)  ドロップアウトする割合
+　　    一般的には0.25や0.5
+　　・全結合層の追加
+　　    model.add(Flatten())  １次元にする
+　　    model.add(Dense(128, activation='relu'))  128ユニットの隠れ層
+　　・出力層
+　　    model.add(Dense(10, activation='softmax')) 10クラス分類、ソフトマックス
+　　・model.summary()：モデルの構造確認
+　　・model.compile(loss='categorical_crossentropy',  損失関数
+              optimizer='sgd',  オプティマイザ
+              metrics=['accuracy']) 精度
+　　・損失関数（loss）
+　　　・多項分類は「categorical_crossentropy」
+　　　・二項分類の場合は「binary_crossentropy」
+　　・最適化アルゴリズム（optimizer）
+　　　・SGDとはStochastic Gradient Descentの略。確率的勾配降下法。
+　　・model.fit(X_train, y_train, epochs=50)：モデルの訓練
+　　・cnn_pred = model.predict(X_test)：予測
+　　
+　NDLラボ 平仮名画像データ
+　　・「文字画像データセット（平仮名73文字版）」
+　　・os.listdir(path)：ファイル、ディレクトリの一覧取得
+　　・os.path.isfile()：ファイルかどうか
+　　・os.isdir()：ディレクトリかどうか
+　　・globモジュールはファイルやディレクトリを操作するときに、正規表現やワイルドカードによるパターンマッチングが可能
+　　　・list1 = glob.glob("*.png")：拡張子を指定してファイルの一覧を取得
+　　・files_df.sample(frac=1, random_state=42).reset_index(drop=True)：ランダムサンプリング
+　　・np.save(path + 'charfeatures.npy', charfeatures)：numpy array をファイルに出力（バイナリファイル）
+　　・charfeatures_load = np.load(path + 'charfeatures.npy')：ファイルから入力
+　　・files_pd.to_csv(path + 'files_df.csv', index=False)：pandas DataFrame をファイルに出力
+　　・files_df_load = pd.read_csv(path + 'files_df.csv')：ファイルから読み込み
+　　・pd.value_counts()：各値ごとの数
+　　・ターゲットクラスは平仮名の文字列のままでは、ニューラルネットワークの入力値として使用できない。
+　　　LabelEncoder()を使って、それぞれの平仮名を数値へ変換する必要がある。
+　　・encoder = LabelEncoder()：LabelEncoderインスタンス生成
+　　・encoder.fit(y)：ターゲットデータのフィッティング
+　　・encoder.classes_：認識したクラスの表示
+　　・encoder.transform()：数値に変換
+　　
+　　・CNNで３つのモデルで試す
+　　　・model_1
+　　　　・ベースラインモデルとしてシンプルな構造のCNN
+　　　　・畳み込み層x2、maxpooling層x2、全結合層x2
+　　　・model_2
+　　　　・model_1と同等の層を持つCNN
+　　　　・model_1の各層にドロップアウト(0.25)を追加
+　　　・model_3
+　　　　・model_2をより深くした構造のCNN
+　　　　・畳み込み層x3、maxpooling層x3、全結合層x2
+　　・より正しい検証を行うためKerasのEarlyStoppingを用いる
+　　・CNNのようなニューラルネットワークではモデル訓練が完了した時に最良とは限らない
+　　・Kearsのコールバック（callbacks）を利用して、訓練中のモデル内部の状態と統計量を可視化することで、一定の条件を達した時点でモデル訓練を中断することが可能（EarlyStopping）
+　　・callbacks = EarlyStopping(monitor='val_loss', patience=3)：EarlyStoppingを設定
+　　　monitor='val_loss'　monitorとは訓練中に監視する値。validation data（テストデータ）のloss（損失関数の値）。
+　　　patience=3　patienceは各エポックで値が改善しなくなってから訓練を中断するまでの回数。
+　　・loss（損失関数の値）、acc（評価関数の値）は訓練データに対してのもの。
+　　・val_lossとval_accはテストデータに対してのもの
+　　・model_1.fit(X_train, y_train, validation_data=(X_test, y_tset), callbacks=[callbacks], epochs=50)：
+　　　訓練。validation_data の loss で EarlyStopping。
+
+
+
