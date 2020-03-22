@@ -270,5 +270,96 @@ MNISTデータセット + Kerasを使ってCNNを構築
 　　・model_1.fit(X_train, y_train, validation_data=(X_test, y_tset), callbacks=[callbacks], epochs=50)：
 　　　訓練。validation_data の loss で EarlyStopping。
 
+　データ拡張
+　　・データ拡張とは英語でData Augmentation
+　　・データ拡張が必要なパターン
+　　　・パターン1 不均衡データ
+　　　　・「Garbage in, Garbage Out（ゴミを入れてもゴミしか出てこない）」と名言がある通り、データが非常に重要
+　　　　・データに偏りがあることが多い
+　　　　・データのクラスに偏りがあるデータを不均衡データ（Skewed Data）と呼ぶ
+　　　　・病気を示すポジティブクラスの写真をより多く集められれば問題は解決する
+　　　　・「稀な病気」だと、データを集めるのには多大な時間と労力がかかる
+　　　　・現在あるデータを活用して、データを拡張することによりデータセット全体の不均衡性を解消することが可能
+　　　・パターン2 推測精度を改善する
+　　　　・モデルの推測精度を改善するためにも頻繁に用いられる
+　　　　・原型を留めた形でデータを水増しする
+　　　　
+　データ読み込みと前処理
+　　・データセット「Chest X-Ray Images(Pnuemonia)」
+　　　・正常と肺炎の画像データ
+　　　・コンテント　train, test, valごとにNormal, Pneumoniaに画像が分類
+　　　　train
+　　　　　- Normal 1,341枚
+　　　　　- Pneumonia 3,875枚
+　　　　test
+　　　　　- Normal 234枚
+　　　　　- Pneumonia 390枚
+　　　　val
+　　　　　- Normal 8枚
+　　　　　- Pneumonia 8枚
+　　　・フォーマット
+　　　　jpeg形式
+　　　　カラー
+　　　　サイズ不均衡
+　　　・備考
+　　　　・「广州市?女儿童医?中心」の定期検診で取得されたデータ
+　　　　・低品質のデータは事前にスクリーニングで除外
+　　・img = cv2.resize(temp[i], (64, 64))：画像のリサイズ
+　　・元画像に空白エリアを追加して、全ての画像を正方形にしてからリサイズする手法もある。
+　　・異なるサイズのデータを扱えるようCNNの構造に工夫を加えることも可能
+　　・np.where(train_df['Label'] == "PNEUMONIA", 1, 0)：条件に一致するデータのインデックスを取得。
+　　　第２、第３引数がある場合は、一致する場合は第二引数、一致しない場合は第三引数を返す。
+　　　
+　ベースラインモデル訓練
+　　・フィルタのサイズは数多くあるCNNのハイパーパラメータの一つ
+　　　・(3, 3)で検証を行い、結果を確認しながら(5, 5)や(7, 7)と増やして検証するのが一般的
+　　・プールサイズもCNNのハイパーパラメータの一つ
+　　　・プール層のサイズは一般的に(2, 2)など偶数を用いる
+　　　・プールサイズを大きくしてしまうと、より多くのデータが圧縮される
+　　・ドロップアウトもCNNの重要なハイパーパラメータ
+　　　・一般的に(0.25)や(0.5)が使われる
+　　　・値が高すぎると未学習になる
+　　・「肺炎(1)」「正常(0)」の二項分類なので、出力層の活性化関数は「Sigmoid（シグモイド）」
+　　・二項分類は「Sigmoid（シグモイド）」、「Sigmoid（シグモイド）」を使用
+　　・「elu（Exponential Linear unit）」や「tanh（ハイパボリックタンジェント）」がある
+　　・二項分類なので損失関数は「binary_crossentropy」
+　　・最適化関数は「Adam（読み：アダム）」を使用
+　　・「Adam」は確率的勾配降下法（Stochastic Gradient Descent）の拡張版
+　　・CNNの最適化関数は「Adam」または「SGD（確率的勾配降下法）」を利用するのが一般的
+　
+　データ拡張
+　　・Kerasでは、「ImageDataGenerator」クラスでデータ拡張できる
+　　　・rotation_range : 範囲内にランダムで回転
+　　　・width_shift_range ： 範囲内でランダムに水平シフト
+　　　・height_shift_range : 範囲内でランダムに垂直シフト
+　　　・shear_range : 指定した角度でせん断変換
+　　　・zoom_range : 範囲内でランダムにズーム
+　　　・horizontal_flip : ランダムに水平方向に反転
+　　　・data_gen = ImageDataGenerator(　　：加工した画像を作成のインスタンス
+    rotation_range=50,
+    width_shift_range=0.1,
+    height_shift_range=0.1,
+    shear_range=0.2,
+    zoom_range=0.1,
+    horizontal_flip=True
+)
+　　　・datagen.flow()：加工した画像の取得
+　　　・datagen.flow()は加工処理を加えたデータをバッチで戻す
+　　　・ジェネレーターを使ったモデル訓練はfit_generator()を使う
+　　　・steps_per_epochは1回のエポックのジェネレーターの合計yield数を指定
+　　　・指定がない場合はlen(generator)で算出
+　　　・aug_model.fit_generator(　　ジェネレーターを使ったモデル訓練
+    data_gen.flow(X_train, y_train, batch_size=32, seed=42),
+    steps_per_epoch=163,
+    epochs=20,
+    verbose=1,
+    shuffle=False,
+    callbacks=[callbacks],
+    validation_data=(X_test, y_test)
+)
 
-
+その他
+　・np.count_nonzero(y_train == 0)：条件に一致するものをカウント
+　・keras.backend.image_data_format()：データフォーマット確認　「channels_last（初期値）」と「channles_first」
+　・assert ：条件を満たさない場合に例外を発生させる
+　
