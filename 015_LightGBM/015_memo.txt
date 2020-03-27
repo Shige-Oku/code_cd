@@ -1,0 +1,117 @@
+https://papers.nips.cc/paper/6907-lightgbm-a-highly-efficient-gradient-boosting-decision-tree.pdf#search='lightGBM+paper
+
+LightGBMとは
+　・LightGBMとは決定木アルゴリズムに基づいた勾配ブースティング（Gradient Boosting）の機械学習フレームワーク。
+　・決定木
+　　・LightGBMは決定木の勾配ブースティングのフレームワーク。
+　　・英語で「Decision Tree（ディシジョン・ツリー）」
+　　・決定木では条件に基づいて分岐
+　　・推測結果を明確かつ容易に説明することができる
+　・アンサンブル学習
+　　・LightGBMは決定木の勾配ブースティングのフレームワーク
+　　・勾配ブースティングはアンサンブル学習の「ブースティング」の手法を使用
+　　・複数のモデル（学習器）を融合させて1つの学習モデルを生成する手法
+　　・アンサンブル学習は大きく3つの手法「バギング」「ブースティング」「スタッキング」に別れる
+　　・バギングはそれぞれのモデルを並列的に学習を行う
+　　・ブースティングは前の弱学習器の結果を次の学習データに反映させる
+　　・決定木を弱学習器として「バギング」によるアンサンブル学習の手法を「ランダムフォレスト」
+　　・勾配ブースティングは決定木を弱学習器として「ブースティング」の手法を用いてアンサンブル学習を行う
+　・勾配ブースティング
+　　・複数の弱学習器（LightGBMの場合は決定木）を一つにまとめるアンサンブル学習の「ブースティング」を用いた手法
+　　・前の弱学習器の結果を、次の学習データに反映
+　　・決定木（1号）の推測結果と実際の値の「誤差」を訓練データとして、決定木（2号）の訓練を行う
+　　・N号の決定木はN-1号の決定木の誤差（Residuals）を学習
+　　・勾配ブースティングはそれぞれの弱学習器の誤差を学習する
+　・LightGBMは大規模なデータセットに対して計算コストを極力抑える工夫が施されている
+　・の機械学習手法と比較しても短時間でモデル訓練可能
+　・決定木の扱い方には「Level-Wise」と「Leaf-Wise」の2つの手法が存在
+　・「Level-wise」とは決定木のlevel（つまり層）が成長
+　・「Leaf-wise」では決定木のleaf（つまり葉）に準じて成長
+　・LightGBMはこの「Leaf-wise」という手法を採用
+　・従来の「Level-wise」に比べて「Leaf-wise」は訓練時間が短くなる傾向にある
+　・課題として最適な枝分かれのポイントを探すための計算コストがある
+　・従来の決定木では厳密な枝分かれポイントを探すため、全てのデータポイントを読み込む
+　・LigtGBMでは訓練データの特徴量を階級に分けてヒストグラム化することで、意図的に厳密な枝分かれを探さず大規模なデータセットに対しても計算コストを抑えることが可能
+　・LightGBMの特徴
+　　・モデル訓練に掛かる時間が短い 
+　　・メモリ効率が高い
+　　　・計量値をヒストグラムとして扱うのでメモリを抑えることが可能
+　　・推測精度が高い
+　　　・Leaf-Wiseのため推測精度が改善する傾向にある
+　　　・Leaf-Wiseの方がLevel-Wiseと比較して、より複雑な決定木となる
+　　・過学習しやすい
+　　　・Leaf-wiseは決定木が複雑になる
+　　　・決定木の構造をハイパーパラメータで適切に調整しないと過学習（Overfitting）となる可能性が高い
+　　・大規模なデータセットも訓練可能
+　　　・全く同等の大規模な訓練データを使った場合、XGBoostよりもLightGBMはモデル訓練時間が大幅に短い傾向にある
+　　　・大規模データに適している手法
+　・LightGBMとXGBoostの比較
+　　・大枠ではほとんど同種のフレームワーク
+　　・XGBoostでもパラメータtree_method = histとすることで、ヒストグラムベースのアルゴリズムを採用することも可能
+　　・LightGBMはXGBoostよりも訓練時間が短い傾向にある
+　　・XGBoost、LightGBM、Catboostの検証を行なった結果、全ての状況で明確に優れていると言える手法は無い
+　　・
+　・LightGBMのインストール
+　
+　・使用するデータセット
+　　・「Kuzushiji-MNIST」（KMNIST）
+　　・ターゲット：49種類の平仮名
+　　
+　　・np.load('./dataset/kuzushiji/k49-train-imgs.npz')['arr_0']：キー'arr_0'の読み込み
+　　・cl_map_index = cl_map.set_index('index').to_dict()['char']：dictionayに変換
+　
+　・ハイパーパラメータ
+　　・lgb.LGBMClassifier()：LightGBMのクラス分類器生成
+　　・num_leaves
+　　　・num_leaves(葉の数)が重要
+　　　・num_leavesは決定木の複雑度を調整
+　　　・num_leavesの値が高すぎると過学習となり、低すぎると未学習になる
+　　　・num_leavesを調整する場合はmax_depth（決定木の深さ）のパラメータと一緒に調整すると良い
+　　・min_data_in_leaf 
+　　　・min_data_in_leafはとても重要なハイパーパラメータ
+　　　・決定木のノード（葉）の最小データ数を指定
+　　　・値が高いと決定木が深く育つのを抑えるため過学習防ぐ
+　　　・未学習となる場合もある
+　　　・min_data_in_leafは訓練データのレコード数とnum_leavesに大きく影響される
+　　・max_depth
+　　　・決定木の深さを指定するハイパーパラメータ
+　　　・単体で調整するよりも、他のハイパーパラメータとのバランスを考えながら調整する
+　　LightGBM/Parameters.rst at master ・ microsoft/LightGBM
+　　https://github.com/Microsoft/LightGBM/blob/master/docs/Parameters.rst
+　　
+　　・ポイント
+　　１．モデル訓練のスピードをあげる
+　　　・bagging_fraction（初期値1.0）とbagging_freq（初期値0）を使う
+　　　・feature_fraction（初期値1.0）で特徴量のサブサンプリングを指定
+　　　・小さいmax_bin（初期値 255）を使う
+　　　・save_binary（初期値 False）を使う
+　　　・分散学習を使う
+　　　　公式ガイド
+　　　　　https://lightgbm.readthedocs.io/en/latest/Parallel-Learning-Guide.html
+　　２．推測精度を向上させる
+　　　・大きいmax_bin（初期値255）を使う
+　　　・小さいlearning_rate(初期値0.1)と大きいnum_iterations(初期値100)を使う
+　　　・大きいnum_leaves（初期値31）を使う
+　　　・訓練データのレコード数を増やす（可能であれば）
+　　３．過学習対策
+　　　・小さいmax_binを使う（初期値255）
+　　　・小さいnum_leavesを使う（初期値31）
+　　　・min_data_in_leaf（初期値20）とmin_sum_hessian_in_leaf(初期値1e-3)を使う
+　　　・bagging_fraction（初期値1.0）とbagging_freq（初期値0）を使う
+　　　・feature_fraction（初期値1.0）で特徴量のサブサンプリングを指定
+　　　・訓練データのレコード数を増やす（可能であれば）
+　　　・lambda_l1（初期値0.0）、lambda_l2（初期値0.0）、min_gain_to_split（初期値0.0）で正則化を試す
+　　　・max_depth（初期値-1）を指定して決定木が深くならないよう調整する
+　　
+　　gbm = lgb.train(  # 訓練
+    params,
+    train_data,
+    valid_sets=test_data,
+    num_boost_round=20,
+    verbose_eval=2,
+)
+　　・ハイパーパラメータチューニング
+　　・学習率とイテレーション数の調整
+　　・early_stopping_roundsの使用
+
+
