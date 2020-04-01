@@ -1,0 +1,112 @@
+
+・課題：「Titanic : Machine Learning from Disaster」
+　・train.csv：ヘッダと、891レコード
+　・train.csv：ヘッダと、418レコード
+　・ターゲット：survival
+　　・0 = No, 1 = Yes
+　・特徴量
+　　・pclass：Ticket class
+　　　・1 = 1st, 2 = 2nd, 3 = 3rd
+　　　・pclass: A proxy for socio-economic status (SES)
+　　　・1st = Upper
+　　　・2nd = Middle
+　　　・3rd = Lower
+　　・sex：Sex
+　　・Age：Age in years
+　　・sibsp：of siblings / spouses aboard the Titanic　同乗した兄弟・配偶者
+　　・parch：of parents / children aboard the Titanic　同乗した親・子
+　　・ticket：Ticket number
+　　・fare：Passenger fare　運賃
+　　・cabin：Cabin number
+　　・embarked：Port of Embarkation　乗船した港　
+　　　・C = Cherbourg, Q = Queenstown, S = Southampton
+
+　　・PassengerId - 乗客識別ユニークID
+　　・Survived - 生存フラグ（0=死亡、1=生存）
+　　・Pclass - チケットクラス
+　　・Name - 乗客の名前
+　　・Sex - 性別（male=男性、female＝女性）
+　　・Age - 年齢
+　　・SibSp - タイタニックに同乗している兄弟/配偶者の数
+　　・parch - タイタニックに同乗している親/子供の数
+　　・ticket - チケット番号
+　　・fare - 料金
+　　・cabin - 客室番号
+　　・Embarked - 出港地（タイタニックへ乗った港）
+
+　・Variable Notes
+　　・pclass: A proxy for socio-economic status (SES)
+　　　・1st = Upper
+　　　・2nd = Middle
+　　　・3rd = Lower
+　　
+　　・age: Age is fractional if less than 1. If the age is estimated, is it in the form of xx.5
+　　
+　　・sibsp: The dataset defines family relations in this way...
+　　　・Sibling = brother, sister, stepbrother, stepsister
+　　　・Spouse = husband, wife (mistresses and fiances were ignored)
+　　
+　　・parch: The dataset defines family relations in this way...
+　　　・Parent = mother, father
+　　　・Child = daughter, son, stepdaughter, stepson
+　　　・Some children travelled only with a nanny, therefore parch=0 for them.
+
+　・pd.info()：
+　
+　・欠損値
+　　Age, cabin, embarked に欠損値がある。
+　　　・Age：とりあえず中央値にする。median()（平均値がいい？average()）
+　　　　train['Age'].median()： 28.0
+　　　　test['Age'].median()： 27.0
+　　　・cabin：船室の部屋番号で、あまり影響なさそうなので使用しない。
+　　　・Embarked：乗船した港。あまり関係なさそうだが、一番多い "S" = Southamptonを設定。（テストデータは欠損値なし）
+　　　　・S    644、C    168、Q     77
+　　　・Fare：中央値を設定する。
+　　　　・test['Fare'].median()：14.4542
+　　　・cabin：使わないが保存・比較用に"XXX"を設定する。
+　　　
+　　・pd['Embarked'].unique()：ユニーク値の確認
+　　・pd['Embarked'].value_counts()：各ユニーク値の数を確認
+　　・DataFrameの保存、読み出し
+　　　①pickle
+　　　　df.to_pickle('data/dst/pandas_obj.pkl')
+　　　　df_from_pkl = pd.read_pickle('data/dst/pandas_obj.pkl')
+　　　②CSV
+　　　　df.to_csv('data/dst/pandas_obj.csv')
+　　　　df_from_csv = pd.read_csv('data/dst/pandas_obj.csv', index_col=0, parse_dates=True)
+　　
+　　・pd.dropna()：欠損値を除外（行または列の削除）
+　　・Age
+　　　・train['Age'] = train['Age'].fillna(train['Age'].median())
+　　　・from sklearn.preprocessing import Imputer
+　　　　imputer = Imputer(missing_values=np.nan, strategy='mean')
+　　　　train['Age'] = imputer.fit_transform(train['Age'].values.reshape(-1, 1))
+　　・Embarked
+　　　・train['Embarked'] = train['Embarked'].fillna("S")
+　　　・imputer = Imputer(missing_values=np.nan, strategy='most_frequent')
+　　　　strategy：
+　　　　　mean：平均
+　　　　　midian：中央値
+　　　　　most_frequent：最頻値
+　　　　train['Age'] = imputer.fit_transform(train['Age'].values.reshape(-1, 1))
+　
+　・スケール変換　離散値に変換
+　　・Sex
+　　　from sklearn.preprocessing import LabelEncoder
+　　　LE1 = LabelEncoder()
+　　　train.Sex = LE1.fit_transform(train.Sex.values.reshape(-1, 1))
+　　・Ticket => 削除
+　　　train.Ticket = LE2.fit_transform(train.Ticket.values.reshape(-1, 1))
+　　・Embarked
+　　　train.Embarked = LE3.fit_transform(train.Embarked.values.reshape(-1, 1))
+　　
+　　・from sklearn.preprocessing import Normalizer, StandardScaler
+　　　transformer = StandardScaler().fit(X_train)  # fit does nothing.
+　　　X_train = transformer.transform(X_train)
+　　　X_test = transformer.transform(X_test)
+　　
+　・離散値から戻す
+　　・LabelEncoder.inverse_transform()
+　
+　
+　　
