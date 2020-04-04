@@ -108,5 +108,45 @@
 　・離散値から戻す
 　　・LabelEncoder.inverse_transform()
 　
-　
-　　
+　・可視化
+　　・seaborn.countplot()：データの件数を集計し、ヒストグラムとして出力
+　　　Seaborn で件数や平均値を棒グラフで可視化する - Python でデータサイエンス 
+　　　https://pythondatascience.plavox.info/seaborn/%E6%A3%92%E3%82%B0%E3%83%A9%E3%83%95
+　　　・x, y：集計対象の列名。x に指定した場合縦方向に、y に指定した場合横方向にグラフを描画
+　　　・hue：各軸をさらに分割して集計する場合に利用する列名を指定。
+　　・seaborn.catplot()：「散布図」・「分布図」・「推定値の描画」
+　　　seabornのcatplotを使いこなして可視化力を高める【Kagglerになる#2】 - Qiita
+　　　https://qiita.com/g-k/items/2c5891a27d399645b9aa
+　　　・x,y：プロットするデータを指定する。変数名を与える。
+　　　・hue：x,yで指定したデータのplotを、同一グラフ内でhueで指定したデータに分けてplotする。英語で色相を意味する。
+　　　・col：データのplotをcolに指定したデータに分け、横方向に別のグラフに分けてplotする。
+　　　・kind：グラフの種類を指定。
+　　・f.patch.set_facecolor('white')：背景色の変更
+　　・df.plot.pie(explode=[0, 0.2], autopct='%1.1f%%', ax=ax[0], shadow=True)
+　　　・explode：各要素を中心から離して目立つように表示。0ずらさない。例は2番目の要素をずらす。
+　　　・autopct：構成割合をパーセンテージで表示。 (デフォルト値: None)
+　　　・shadow：True に設定すると影を表示。 (デフォルト値: False)
+　　・df.crosstab()：クロステーブル
+　　　Pandasでクロス集計を行うcrosstab関数の使い方 - DeepAge
+　　　https://deepage.net/features/pandas-crosstab.html
+　　　　・index：行ごとにグループとしてまとめる値を指定
+　　　　・columns：列ごとにグループとしてまとめる値を指定します。
+　　　　・values：(省略可能)初期値None。何かしらの処理を行いたい値を指定。aggfunc引数も指定する必要がある。
+　　　　・aggfunc：(省略可能)初期値None。値に対して何かしらの処理を行いたい時に指定。values引数も指定する必要がある。
+　　　　・margins：(省略可能)初期値False。行/列　にマージンを追加し、小計（ALL）を表示します。
+　　　　・margins_name：追加されたマージンにつける行/列ラベルを指定。
+　　　　・dropna：(省略可能)初期値True。欠損値を飛ばすかどうかを指定します。
+　　　　・normalize：(省略可能)初期値False。指定された範囲の合計値で値を割ることで値を正規化。
+　　　・df.style
+　　　　Python Jupyter + pandas で DataFrame 表示をカスタマイズする - StatsFragments
+　　　　http://sinhrks.hatenablog.com/entry/2015/11/22/202640
+　　　　・df.style.background_gradient(cmap='winter')：カラーマップの適用
+　　　　・df.style.highlight_max(): 列もしくは行の最大値を指定して色分け。
+　　　　・df.style.highlight_min(): 列もしくは行の最小値を指定して色分け。
+　　　　・df.style.highlight_null(): NaN を指定して色分け。
+　　　　・df.style.bar(): 各セルの値に応じて棒グラフのように背景色表示。
+　　　　・df.style.set_properties()：プロパティの指定
+　　　　・df.style.applymap(): 各セルに対して CSS を返す関数を適用 (関数への入力はスカラー)。
+　　　　・df.style.apply(): 各列もしくは各行に対して CSS を返す関数を適用 (関数への入力は 各列/各行の値からなる Series )。
+
+
