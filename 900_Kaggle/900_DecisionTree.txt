@@ -1,0 +1,68 @@
+
+1.10. Decision Trees - scikit-learn 0.22.2 documentation
+https://scikit-learn.org/stable/modules/tree.html
+
+決定木(分類)のハイパーパラメータとチューニング - Qiita
+https://qiita.com/FujiedaTaro/items/47e06c758b451cbda412
+
+決定木のハイパーパラメータ
+
+・criterion : string, optional (default=”gini”)：データの分割の方法
+　・gini : gini係数を用いて、データの分離を行う。
+　・entropy :information gain を使い、効率的な条件を探索。
+　・ジニ係数の方が、連続データを得意としている。
+　・ントロピーはカテゴリーデータを得意としている。
+　・ジニ係数は、誤分類を最小化するのに対して、エントロピーは探索的に基準値を探す。
+　
+・splitter : string, optional (default=”best”)：各ノードで分割を選択するための戦略
+　・best : 最適な分割を選択する。
+　・random : 最良のランダム分割を選択する
+　・基本的にはbestを使用するが、過学習しやすい。計算時間が短い。
+　
+・max_depth : int or None, optional (default=None)：ツリーの深さ
+　・Noneの場合、ノードは、すべてのリーフが1になるまで展開される。
+　・通常、過学習を防ぐために決定木の深さの最大値を決め制限する。
+
+・min_samples_split : int, float, optional (default=2)：ノードを分割するために必要な最小サンプルサイズ。
+　・整数を指定した場合，その数，小数を指定した場合，全サンプルサイズに対する割合になる。
+　・0.01ぐらいを目安とし、過学習の場合は値を大きくしていく。
+
+・min_samples_leaf : int, float, optional (default=1)：葉を構成するのに必要な最小限のサンプル。
+　・整数を指定した場合は、葉を構成するのに必要な最小限のサンプルの数。
+　・小数を指定した場合，元々のサンプルサイズに占める割合。
+　・小さいと過学習気味になる。
+
+・min_weight_fraction_leaf : float, optional (default=0.)：重みの総和の最小加重割合
+　・リーフノードに必要な（すべての入力サンプルの）重みの総和の最小加重割合。 
+　・データが不均衡の場合に使用する。
+
+・max_features : int, float, string or None, optional (default=None)：特徴量の数を指定。
+　・最適な分割をするために考慮する特徴量の数を指定する。
+　・整数を指定した場合，その個数。
+　・小数の場合全特徴量に対する割合個。
+　・auto を指定した場合，特徴量数のルート個（平方根）
+　・log2 を指定した場合，log2(特徴量数) 個。
+　・過学習の場合は減らす。
+
+・random_state : int, RandomState instance or None, optional (default=None)：シード。
+　・同じ結果を再現する場合に指定。
+
+・max_leaf_nodes : int or None, optional (default=None)：最大の葉の数を指定
+　・Noneの場合、リーフノードの数は無制限。
+　・過学習の場合は小さくする。
+
+・min_impurity_decrease : float, optional (default=0.)：木の成長における早期停止の閾値
+　・ノードは、その不純物がしきい値を上回ると分割され、そうでない場合はリーフ。
+　・過学習の場合は大きくする。
+
+・class_weight : dict, list of dicts, “balanced” or None, default=None：各クラスに重みを設定する。
+　・balanced または None を指定。デフォルトは None。
+　・ディクショナリを指定する場合，{class_label：weight} の形式で，各クラスに重みを設定。
+　・不均衡なデータのときに使用。
+
+・presort : bool, optional (default=False)：データを事前に並び替える。
+　・データを事前に並び替えることで計算の高速化を図る。
+　・データサイズが大きい場合はトレーニングが遅くなる可能性がある。
+　・データサイズが小さい場合や決定木の深さが制限されている場合は高速化が期待できる。
+
+

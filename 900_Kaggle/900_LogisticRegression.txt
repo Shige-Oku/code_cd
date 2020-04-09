@@ -1,0 +1,10 @@
+
+ロジスティック回帰のハイパーパラメータ
+
+sklearn.linear_model.LogisticRegression - scikit-learn 0.22.2 documentation
+https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html
+
+ロジスティック回帰(分類)とハイパーパラメータのチューニング - Qiita
+https://qiita.com/FujiedaTaro/items/5784eda386146f1fd6e7
+
+

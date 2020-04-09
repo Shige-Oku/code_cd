@@ -1,0 +1,99 @@
+
+3.2.4.3.1. sklearn.ensemble.RandomForestClassifier - scikit-learn 0.22.2 documentation
+https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html
+
+ランダムフォレスト(分類)とハイパーパラメータのチューニング - Qiita
+https://qiita.com/FujiedaTaro/items/61ded4ea5643a6204317
+
+・n_estimators：integer, optional (default=100)
+　・ランダムフォレストのツリーの木の数を指定。
+　　（バージョン 0.22 で変更: 0.22 で n_estimators のデフォルト値が 10 から 100 に変更。）
+　
+・criterion：string, optional (default=”gini”)
+　・分割の質を測定する関数。
+　・ジニ不純物を表す "gini "と情報利得を表す "entropy"
+　・決定木のパラメータ
+　
+・max_depth：integer or None, optional (default=None)
+　・ツリーの深さ
+　・Noneの場合、すべてのリーフが純粋になるまで、
+　　またはすべてのリーフがmin_samples_splitサンプル以下になるまでノードを展開する。
+　　
+・min_samples_split：int, float, optional (default=2)
+　・内部ノードを分割するのに必要な最小サンプル数。
+　・int の場合は、min_samples_split を最小値とする。
+　・小数の場合、分割する割合。ceil(min_samples_split * n_samples)は各分割の最小サンプル数。
+　（バージョン 0.18 で変更: 小数の float 値を追加。）
+
+・min_samples_leaf：int, float, optional (default=1)
+　・リーフノードに必要なサンプル数の最小値。
+　・任意の深さでの分岐点は，左右の枝のそれぞれに少なくともmin_samples_leaf学習サンプルを残す場合にのみ考慮される。
+　・回帰において，モデルを平滑化する効果がある。
+　・int の場合は，min_samples_leaf を最小値とする。
+　・floatであれば，min_samples_leafは分数であり， ceil(min_samples_leaf * n_samples)は各ノードの最小サンプル数。
+　（バージョン 0.18 で変更されました: 分数の float 値を追加）
+
+・min_weight_fraction_leaf：float, optional (default=0.)
+　・最適な分割を探す際に考慮する特徴の数を指定。
+　・int の場合は、各分割で max_features の特徴量を考慮。
+　・float の場合、max_features は小数であり、各分割で int(max_features * n_features) の特徴量を考慮。
+　・"auto" の場合は max_features=sqrt(n_features)。
+　・"log2" の場合、max_features=log2(n_features)。
+　・None の場合は max_features=n_features。
+　注：max_features以外の機能を効果的に検査する必要がある場合でも、
+　　ノードサンプルの有効なパーティションが少なくとも1つ見つかるまで、分割の検索は停止しない。
+
+・max_leaf_nodes：int or None, optional (default=None)
+　・max_leaf_nodesを使用してツリーを最適な方法で成長。 
+　・最良のノードは、不純物の相対的な減少として定義。 Noneの場合、リーフノードの数に制限はない。
+　
+・min_impurity_decrease：float, optional (default=0.)
+　・この値以上の不純物の減少を誘導する場合、ノードは分割。
+　・加重不純物減少方程式
+　　N_t / N * (impurity - N_t_R / N_t * right_impurity -
+                          N_t_L / N_t * left_impurity)
+　　ここで、Nは総サンプル数、N_tは現在のノードにおけるサンプル数、N_t_Lは左の子のサンプル数、
+　　N_t_Rは右の子のサンプル数である。
+　　N, N_t, N_t_R, N_t_Lは、sample_weightが渡された場合、すべて加重和を参照する。
+　　（バージョン0.19で追加。）
+
+・min_impurity_split：float, (default=1e-7)
+　・木の成長を早期に停止させる閾値。
+　　ノードは、その不純物が閾値を超えていれば分割し、そうでなければ葉となる。
+　バージョン0.19から非推奨:
+　　 min_impurity_splitは0.19ではmin_impurity_decreaseの代わりに非推奨。
+　　 min_impurity_split のデフォルト値は 0.23 で 1e-7 から 0 に変更され、0.25 で削除。
+　　 代わりに min_impurity_decrease を使用。
+
+・bootstrap：boolean, optional (default=True)
+　・木を構築する際にブートストラップ・サンプルを使用するかどうか。
+　　Falseの場合、各木を構築するためにデータセット全体を使用。
+
+・oob_score：bool (default=False)
+　・一般化精度を推定するためにアウトオブバッグサンプルを使用するかどうか。
+
+・n_jobs：int or None, optional (default=None)
+　・it, predict, decision_path, apply はすべてツリー上で並列化。
+　・None は、joblib.parallel_backend のコンテキストでない限り、1 を意味。
+　・-1 はすべてのプロセッサを使用する。
+　・詳細は用語集を参照。
+　　https://scikit-learn.org/stable/glossary.html#term-n-jobs
+
+・random_state：int, RandomState instance or None, optional (default=None)
+　・シードを指定
+　
+・verbose：int, optional (default=0)
+　・フィッティングや予測の際の冗長性を制御
+
+・warm_start：bool, optional (default=False)
+　・True に設定すると、前回の呼び出しのソリューションを再利用し適合し、アンサンブルにさらに多くの推定量を追加・
+
+・class_weight：dict, list of dicts, “balanced”, “balanced_subsample” or None, optional (default=None)
+
+
+・ccp_alpha：non-negative float, optional (default=0.0)
+
+・max_samplesint or float, default=None
+
+
+
