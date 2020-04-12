@@ -8,3 +8,96 @@ https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticR
 https://qiita.com/FujiedaTaro/items/5784eda386146f1fd6e7
 
 
+・penalty：{‘l1’, ‘l2’, ‘elasticnet’, ‘none’}, default=’l2’
+　・ペナルティに使用するノルムを指定
+　・'newton-cg'、'sag' および 'lbfgs' ソルバーは l2 ペナルティのみをサポート。
+　・'elasticnet' は 'saga' ソルバでのみサポート。
+　・' none' (liblinearソルバーではサポートされていない) の場合、正則化は適用されない。
+　バージョン0.19の新機能: SAGAソルバーでのl1ペナルティ ('多項式' + L1を許可)
+
+・dual：bool, default=False
+　・デュアル定式化またはプライマル定式化。
+　・デュアル定式化は、liblinearソルバーを用いたl2ペナルティの場合にのみ実装
+　・n_samples > n_features の場合は dual=False を優先
+
+・tol：float, default=1e-4
+　・停止基準の許容範囲
+
+・C：float, default=1.0
+　・正則化の強さの逆数; 正の浮動小数点数で指定。
+　・サポートベクターマシンのように, 値が小さいほど強い正則化を指定。
+　# SVM
+　・CパラメータはSVMモデルに対して「分類ミスをどのくらい許容するか設定する値」
+　・Cパラメータが低い時はモデルは分類ミスを許容し、Cパラメータが高いと分類ミスを極力避ける。
+　・Cパラメータが低い状態を「ソフトマージン」と呼び、高い状態は「ハードマージン」と呼ぶ。
+
+・fit_intercept：bool, default=True
+　・定数(バイアスまたは切片)を決定関数に追加するかどうかを指定。
+
+・intercept_scaling：float, default=1
+　・ソルバー 'liblinear' を使用し、 self.fit_intercept が True に設定されている場合にのみ有効。
+　・この場合、x は [x, self.intercept_scaling] となる。
+　　つまり、インスタンスベクトルに intercept_scaling と等しい定数値を持つ「合成」特徴量が追加される。
+　・切片は intercept_scaling * synthetic_feature_weight となる。
+　注意！
+　　合成特徴量は、他のすべての特徴量と同様にl1/l2正則化の影響を受ける。
+　　合成特徴量（したがって切片）に対する正則化の影響を軽減するためには、 intercept_scaling を大きくする。
+
+・class_weight：dict or ‘balanced’, default=None
+　・{class_label: weight}の形式でクラスに関連付けられた重み。
+　・与えられていない場合、すべてのクラスは重み1を持つ。
+　・balanced "モードでは、yの値を使用して、入力データのクラス頻度に反比例した重みを自動的にn_samples / (n_classes * np.bincount(y))のように調整。
+　注意
+　　sample_weightが指定されているときは、これらの重みは sample_weight と乗算される （はめ込み方式で渡される）。
+　バージョン 0.17 の新機能: class_weight='balanced'
+
+・random_state：int, RandomState instance, default=None：シードの指定
+　・最適化問題で使用するアルゴリズム。
+　　・小さなデータセットでは'liblinear'が良く, 大きなデータセットでは'sag'と'saga'の方が高速。
+　　・複数クラスの問題では、多項損失を扱うのは 'newton-cg'、'sag'、'saga'、'lbfgs' のみ。
+　　・'liblinear' は一対一のスキームに限定。
+　　・'newton-cg'、'lbfgs'、'sag'、'saga'はL2かペナルティなし。
+　　・'liblinear'と'saga'はL1ペナルティも扱う。
+　　・「saga」も「elasticnet」のペナルティをサポート。
+　　・'liblinear' は penalty='none' の設定をサポートしていない。
+　注意
+　　’sag'と'saga'の高速収束は、ほぼ同じスケールの特徴量に対してのみ保証される。
+　　sklearn.preprocessingからscaler を使ってデータを前処理することができる。
+　バージョン 0.17 の新機能：確率的平均勾配降下ソルバー
+　バージョン 0.19 の新機能: SAGA ソルバー。
+　バージョン 0.22 での変更: 0.22 でデフォルトのソルバーが 'liblinear' から 'lbfgs' に変更。
+
+・max_iter：int, default=100
+　・ソルバーが収束するまでの最大反復回数。
+
+・multi_class：{‘auto’, ‘ovr’, ‘multinomial’}, default=’auto’
+　・選択されたオプションが 'ovr' の場合は、各ラベルに対してバイナリ問題が適合。
+　・multinomial' の場合、最小化される損失は、データがバイナリであっても、
+　　確率分布全体に渡る多項損失のフィットである。
+　・multinomial' は solver='liblinear'の場合は利用できない。
+　・auto' はデータがバイナリの場合、または solver='liblinear'の場合は 'ovr' を選択し、
+　　そうでない場合は 'multinomial' を選択する。
+　バージョン 0.18 の新機能: '多項式' の場合の確率的平均勾配降下ソルバー。
+　バージョン 0.22 での変更: 0.22 でデフォルトが 'ovr' から 'auto' に変更された
+
+・verbose：int, default=0
+　・liblinearソルバーとlbfgsソルバーでは、冗長性のためにverboseを任意の正の数に設定
+
+・warm_start：bool, default=False
+　・Trueに設定すると、以前の呼び出しのソリューションを再利用して初期化として適合。
+　　それ以外の場合は、以前のソリューションを消去。
+　バージョン0.17の新機能：lbfgs、newton-cg、sag、sagaソルバーをサポートするwarm_start。
+
+・n_jobs：int, default=None
+　・multi_class='ovr'の場合、クラスをまたいで並列化する際に使用するCPUコア数を指定。
+　・ソルバーが'liblinear'に設定されている場合、'multi_class'が指定されているかどうかに関わらず、
+　　このパラメータは無視される。
+　・joblib.parallel_backend コンテキストでない限り、 Noneは1を意味。
+　・-1 はすべてのプロセッサを使用することを意味。
+
+・l1_ratio：float, default=None
+　・Elastic-Net混合パラメータで、0 <= l1_ratio <= 1とする。
+　・penalty='elasticnet'`の場合にのみ使用されます。
+　・ l1_ratio=0と設定すると penalty='l2'と同等で、l1_ratio=1と設定すると penalty='l1'と同等。
+　・0 < l1_ratio <1の場合、ペナルティはL1とL2の組み合わせ。
+

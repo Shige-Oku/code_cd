@@ -1,0 +1,11 @@
+
+XGBoostのハイパーパラメータ
+
+XGBoost Parameters - xgboost 1.1.0-SNAPSHOT documentation
+https://xgboost.readthedocs.io/en/latest/parameter.html
+
+XGBoostパラメータのまとめとランダムサーチ実装 - Qiita
+https://qiita.com/FJyusk56/items/0649f4362587261bd57a
+
+
+

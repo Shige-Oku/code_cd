@@ -1,0 +1,111 @@
+
+SVMのハイパーパラメータ
+
+sklearn.svm.SVC - scikit-learn 0.22.2 documentation
+https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVC.html
+
+非線形SVC(分類)のハイパーパラメータとチューニング - Qiita
+https://qiita.com/FujiedaTaro/items/e5583f8767173e6a6f9a
+
+scikit-learnでSVMのパラメータを調節してみた話 - Qiita
+https://qiita.com/arata-honda/items/8d08f31aa7d7cbae4c91
+
+
+・C：float, optional (default=1.0)
+　・正則化パラメータ。正則化の強さはCに反比例。
+　・厳密に正でなければならない。ペナルティはl2の2乗ペナルティ。
+
+　　　CパラメータはSVMモデルに対して「分類ミスをどのくらい許容するか設定する値」。
+　　　Cパラメータが低い時はモデルは分類ミスを許容し、Cパラメータが高いと分類ミスを極力避ける。
+　　　Cパラメータが低い状態を「ソフトマージン」と呼び、高い状態は「ハードマージン」と呼ぶ。
+
+・kernel：string, optional (default=’rbf’)
+　・アルゴリズムで使用するカーネルタイプを指定・
+　・'linear'、'poly'、'rbf'、'sigmoid'、'precomputed'、または呼び出し可能なもののいずれか。
+　・何も与えられなかった場合は、'rbf'。
+　・callable が与えられた場合，データ行列からカーネル行列を事前計算するために利用。
+
+　　　Kernel（カーネル）はSVMの最も特徴的かつ重要なポイント。
+　　　カーネルは英語では「Kernel Trick」とも呼ばれる。
+　　　「データに新たな次元を追加してハイパープレインを導き出す仕組み」。
+　　　元のデータは2次元のデータであればX軸とY軸のみとなるが、データに処理を行うことにより新たな次元（Z軸）を追加し分類する。
+
+・degree：int, optional (default=3)
+　・多項式カーネル関数('poly')の次数。他のすべてのカーネルでは無視される。
+
+・gamma：{‘scale’, ‘auto’} or float, optional (default=’scale’)
+　・gamma='scale' (デフォルト) が渡された場合、ガンマ値として 1 / (n_features * X.var()) を使用。
+　・'auto' の場合、1 / n_features を使用。
+　バージョン 0.22 で変更: ガンマのデフォルト値が 'auto' から 'scale' に変更。
+
+　　　gamma（ガンマ）」とは、「モデルが訓練データへどれくらいフィットさせるかを調整する値」。
+　　　ガンマの値が高ければ高いほどデータに対してフィットする。
+　　　値が小さいと分類はシンプルなものになり、高いと複雑な分類になりやすい。
+　　　ガンマの値が高いと訓練データへの分類はより複雑化して細かい分類を行うが、「過学習」になりやすい。
+
+・coef0：float, optional (default=0.0)
+　・カーネル関数の独立項。
+　・ 'poly' と 'sigmoid' でのみ有意。
+
+・shrinking：boolean, optional (default=True)
+　・縮小ヒューリスティックを使うかどうか。
+
+・probability：boolean, optional (default=False)
+　・確率推定を有効にするかどうか。 
+　・fitを呼び出す前に有効にする必要がある。
+　・このメソッドは内内部的に 5 倍のクロスバリデーションを使用するため速度が低下し、
+　　predict_probaが予測と一致しない場合がある。 
+
+・tol：float, optional (default=1e-3)
+　・停止基準の許容範囲。
+
+・cache_size：float, optional
+　・カーネルキャッシュのサイズを指定。
+
+・class_weight：{dict, ‘balanced’}, optional
+　・SVCの場合、クラスiのパラメーターCをclass_weight [i] * Cに設定。
+　・指定されていない場合は，すべてのクラスが重み1となる。
+　・「バランス」モードでは、yの値を使用して、n_samples /（n_classes * np.bincount（y））として、
+　　入力データのクラス頻度に反比例する重みを自動的に調整。
+
+・verbose：bool, default: False
+　・冗長な出力を有効にする。
+　注意：
+　　この設定は libsvm のプロセスごとのランタイム設定を利用している。
+
+・max_iter：int, optional (default=-1)
+　・ソルバー内での繰り返しのハードリミット。またはリミットがない場合は-1。
+
+・decision_function_shape：‘ovo’, ‘ovr’, default=’ovr’
+　・形状（n_samples、n_classes）の1対rest（ 'ovr'）決定関数を他のすべての分類子として返すか、
+　　形状（n_samples）を持つlibsvmの元の1対1（ 'ovo'）決定関数を返すか 、n_classes *（n_classes-1）/ 2）。
+　・ただし、1対1（「ovo」）は常にマルチクラス戦略として使用される。
+　バージョン 0.19 で変更: decision_function_shape はデフォルトで 'ovr' になっている。
+　バージョン 0.17 での変更: decision_function_shape='ovr' を推奨。
+　バージョン 0.17 での変更: 非推奨の decision_function_shape='ovo' と None。
+
+　　　多項分類を行う場合、予測精度に大きな影響を与える。
+　　　設定する値ですが「OVR」と「OVO」の2つ。
+　　　Scikit-learnでのデフォルトは「OVR」。
+　　　「OVR」：
+　　　　OVRとは英語の「One vs Rest」の略で、日本語では「1対他分類法」。
+　　　　1つの分類クラスと「他の全ての分類クラス」でハイパープレインを導き出す。
+　　　　メリットとしてはSVMが構築するモデルの数が少なくてすむ。分類クラス数 - 1のモデル数が必要。
+　　　「OVO」：
+　　　　OVOは英語で「One vs One」の略で日本語では「1対1分類法」。
+　　　　各クラスと「別の1クラス毎」にハイパープレイン（境界線）を導き出す手法。
+　　　　クラス毎にハイパープレインを導き出し、最終的にそれらを合体させて分類モデルを構築する方法。
+　　　　全てのクラス毎にモデルを構築するため非常に高負荷な計算処理となる場合が多い。
+　　　　Σ1～n(k)の分類モデルを構築する必要がある。（10クラスなら45モデル）
+
+・break_ties：bool, optional (default=False)
+　・Trueの場合、decision_function_shape='ovr'、クラスの数が2以上の場合、
+　　 predictはdecision_functionの信頼度に応じて同点を解消。
+　・単純な予測と比較して、計算コストが比較的高いことに注意。
+
+・random_state：int, RandomState instance or None, optional (default=None)
+　・確率推定のためにデータをシャッフルするときに使用される疑似乱数ジェネレータのシード。
+　・intの場合、random_stateは乱数ジェネレータによって使用されるシード。
+　・RandomStateインスタンスの場合、random_stateは乱数ジェネレータ。
+　・Noneの場合、乱数ジェネレータはnp.randomによって使用されるRandomStateインスタンス。
+　
