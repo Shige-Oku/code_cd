@@ -504,14 +504,86 @@ Learning Task Parameters
 　　　　マルチクラスのログロス。
 　　　・auc：
 　　　　曲線の下の面積
+　　　・aucpr：
+　　　　PR曲線の下の面積
+　　　・ndcg：
+　　　　正規化された割引累積ゲイン
+　　　・マップ：
+　　　　平均平均精度
+　　　・ndcg @ n、map @ n：
+　　　　「n」を整数として割り当て、評価のためにリストの最上位を切り捨てることができます。
+　　　・ndcg-、map-、ndcg @ n-、map @ n-：
+　　　　XGBoostでは、NDCGとMAPは、正のサンプルを含まないリストのスコアを1と評価します。
+　　　　評価メトリックに「-」を追加することにより、XGBoostはこれらのスコアを0として評価し、
+　　　　特定の条件下で一貫性を保ちます。
+　　　・poisson-nloglik: 
+　　　　ポアソン回帰の負の対数尤度
+　　　・gamma-nloglik: 
+　　　　ガンマ回帰の負の対数尤度
+　　　・cox-nloglik：
+　　　　Cox比例ハザード回帰の負の部分対数尤度
+　　　・gamma-deviance:：
+　　　　ガンマ回帰の残差
+　　　・tweedie-nloglik：
+　　　　Tweedie回帰の負の対数尤度（tweedie_variance_powerパラメーターの指定値で）
+　　　・aft-nloglik:
+　　　　Accelerated Failure Time モデルの負の対数尤度。詳細は、
+　　　　加速化された故障時間による生存率分析を参照してください。
 
+　・seed [default=0]
+　　乱数シード。
+　　このパラメーターはRパッケージでは無視されます。代わりにset.seed（）を使用してください。
 
+Command Line Parameters
+　次のパラメーターは、XGBoostのコンソールバージョンでのみ使用されます。
+　・num_round：
+　　ブースティングのラウンド数
 
+　・data
+　　トレーニングデータのパス
 
+　・test:data
+　　予測を行うためのテストデータのパス
 
-　　　　
+　・save_period [default=0]
+　　モデルを保存する期間。
+　　save_period = 10を設定すると、10ラウンドごとにXGBoostがモデルを保存します。
+　　0に設定すると、トレーニング中にモデルが保存されません。
 
+　・task [default= train] options: train, pred, eval, dump
+　　・train：
+　　　データを使用したトレーニング
+　　・pred：
+　　　test：dataの予測を行う
+　　・eval: 
+　　　eval[name]=filename で指定された統計情報を評価するためのもの
+　　・dump：
+　　　学習したモデルをテキスト形式にダンプします
 
+　・model_in [default=NULL]
+　　テスト、eval、ダンプタスクに必要な入力モデルへのパス。
+　　トレーニングで指定された場合、XGBoostは入力モデルからトレーニングを継続します。
 
+　・model_out [default=NULL]
+　　トレーニング終了後の出力モデルへのパス。
+　　指定しない場合、XGBoostは0003.modelなどの名前のファイルを出力します。0003はブーストラウンドの数です。
+
+　・model_dir [default= models/]
+　　トレーニング中に保存されたモデルの出力ディレクトリ
+
+　・fmap
+　　モデルのダンプに使用されるフィーチャーマップ
+
+　・dump_format [default= text] options: text, json
+　　モデルダンプファイルのフォーマット
+
+　・name_dump [default= dump.txt]
+　　モデルダンプファイル名
+
+　・name_pred [default= pred.txt]
+　　predモードで使用される予測ファイルの名前
+
+　・pred_margin [default=0]
+　　変換された確率の代わりにマージンを予測
 
 
