@@ -1,0 +1,141 @@
+
+【機械学習】ニューラルネットワークにおける効率的なパラメータ調整方法についてまとめてみた - Qiita
+https://qiita.com/To_Murakami/items/e8b7bfe66750fb3f2050
+
+sklearn.neural_network.MLPClassifier - scikit-learn 0.22.2 documentation
+https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPClassifier.html
+
+ニューラルネットワークのパラメータ設定方法(scikit-learnのMLPClassifier)
+https://spjai.com/neural-network-parameter/
+
+class sklearn.neural_network.MLPClassifier(hidden_layer_sizes=(100, ), activation='relu', solver='adam', alpha=0.0001, batch_size='auto', learning_rate='constant', learning_rate_init=0.001, power_t=0.5, max_iter=200, shuffle=True, random_state=None, tol=0.0001, verbose=False, warm_start=False, momentum=0.9, nesterovs_momentum=True, early_stopping=False, validation_fraction=0.1, beta_1=0.9, beta_2=0.999, epsilon=1e-08, n_iter_no_change=10, max_fun=15000)
+
+多層パーセプトロン分類器
+
+このモデルは、LBFGSまたは確率的勾配降下法を使用して対数損失関数を最適化します。
+
+
+　・hidden_layer_sizes:tuple, length = n_layers - 2, default=(100,)
+　　i番目の要素は、i番目の隠れ層内のニューロンの数を表します。
+
+　・activation{‘identity’, ‘logistic’, ‘tanh’, ‘relu’}, default=’relu’
+　　隠れ層の活性化関数。
+　　　・'identity'：（恒等写像）
+　　　　ノーオペ活性化, 線形ボトルネックの実装に便利, f(x) = xを返す.
+　　　・‘logistic’：（シグモイド）
+　　　　ロジスティックシグモイド関数「ロジスティック」は、f（x）= 1 /（1 + exp（-x））を返します。
+　　　・‘tanh’：（ハイパボリックタンジェント）
+　　　　双曲線tan関数である ‘tanh’は、f（x）= tanh（x）を返します。
+　　　・‘relu’：
+　　　　修正された線形単位関数「relu」は、f（x）= max（0、x）を返します
+
+　・solver{‘lbfgs’, ‘sgd’, ‘adam’}, default=’adam’
+　　重み最適化のためのソルバー。
+　　・‘lbfgs’：
+　　　lbfgs' は準ニュートン法の系列のオプティマイザです。
+　　・‘sgd’：
+　　　sgd' は確率的勾配降下法を指します。
+　　・‘adam’：
+　　　「adam」は、Kingma、Diederik、およびJimmy Baによって提案された確率的勾配ベースのオプティマイザーを指します
+
+　・alpha:float, default=0.0001
+　　L2 ペナルティ（正則化項）パラメータ。
+
+　・batch_size:int, default=’auto’
+　　確率的オプティマイザのためのミニバッチのサイズ。
+　　ソルバーが'lbfgs'の場合、分類器はミニバッチを使用しません。
+　　auto "に設定されている場合、batch_size=min(200, n_samples)
+
+　・learning_rate{‘constant’, ‘invscaling’, ‘adaptive’}, default=’constant’
+　　重み更新のための学習率スケジュール。
+　　・constant：
+　　　'constant'は'learning_rate_init'で与えられた一定の学習率です。
+　　・invscaling：
+　　　「invscaling」は、「power_t」の逆スケーリング指数を使用して、
+　　　タイムステップ「t」ごとに学習率を徐々に下げます。
+　　　effective_learning_rate = learning_rate_init / pow（t、power_t）
+　　・adaptive：
+　　　'adaptive'は学習損失が減少し続ける限り学習率を'learning_rate_init'まで一定に保つ。
+　　　2つの連続したエポックが学習損失を少なくともtol減少させることに失敗するか、
+　　　'early_stopping'がオンの場合は検証スコアを少なくともtol増加させることに失敗するたびに、
+　　　現在の学習率が5で除算されます。
+　　solver='sgd' のときのみ使用される。
+
+　・learning_rate_init:double, default=0.001
+　　使用された初期学習率。
+　　重みを更新する際のステップサイズを制御します。
+　　solver = ’sgd’または ‘adam’の場合にのみ使用されます。
+
+　・power_t:double, default=0.5
+　　逆スケーリング学習率の指数。
+　　learning_rateが「invscaling」に設定されている場合、効果的な学習率の更新に使用されます。
+　　solver = ’sgd’の場合にのみ使用されます。
+
+　・max_iter:int, default=200
+　　最大反復回数。ソルバーは収束('tol'で決定)するまで、あるいはこの回数の反復を繰り返す。
+　　確率的ソルバー ('sgd', 'adam') の場合、これは勾配のステップ数ではなく、
+　　エポック数 (各データポイントが何回使用されるか) を決定することに注意してください。
+
+　・shuffle:bool, default=True
+　　各反復でサンプルをシャッフルするかどうか。 solver = ’sgd’または ‘adam’の場合にのみ使用されます。
+
+　・random_state:int, RandomState instance or None, default=None
+　　intの場合、random_stateは乱数ジェネレータによって使用されるシードです。
+　　RandomStateインスタンスの場合、random_stateは乱数ジェネレータです。 
+　　Noneの場合、乱数ジェネレータはnp.randomによって使用されるRandomStateインスタンスです。
+
+　・tol:float, default=1e-4
+　　最適化のための許容範囲。
+　　learning_rateを'adaptive'に設定しない限り、n_iter_no_changeの連続したイテレーションに対して
+　　少なくともtolだけ損失またはスコアが改善されない場合、収束に達したとみなされ、学習が停止されます。
+
+　・verbose:bool, default=False
+　　進行状況のメッセージを標準出力に出力するかどうか。
+
+　・warm_start:bool, default=False
+　　Trueに設定すると、以前の呼び出しのソリューションを再利用して初期化として適合します。
+　　それ以外の場合は、以前のソリューションを消去します。
+　　用語集を参照してください。
+
+　・momentum:float, default=0.9
+　　勾配降下更新の運動量。0 から 1 の間でなければなりません。 solver='sgd' のときにのみ使用されます。
+
+　・nesterovs_momentum:boolean, default=True
+　　ネステロフの勢いを利用するかどうか。
+　　solver = ’sgd’かつ運動量> 0の場合にのみ使用されます。
+
+　・early_stoppin:gbool, default=False
+　　検証スコアが向上しない場合に、早期停止を使用してトレーニングを終了するかどうか。
+　　trueに設定すると、トレーニングデータの10％が検証として自動的に確保され、
+　　検証スコアがn_iter_no_changeの連続したエポックに対して少なくともtol改善されない場合、トレーニングが終了します。
+　　マルチラベル設定を除いて、分割は階層化されます。 solver = ’sgd’または ‘adam’の場合にのみ有効
+
+　・validation_fraction:float, default=0.1
+　　早期停止の検証セットとして確保しておくトレーニングデータの割合。
+　　0から1の間でなければなりません。early_stoppingがTrueの場合にのみ使用されます
+
+　・beta_1:float, default=0.9
+　　adamの1次モーメントベクトルの推定の指数関数的減衰率は、[0、1）である必要があります。
+　　solver = ’adam’の場合にのみ使用されます。
+
+　・beta_2:float, default=0.999
+　　adamの2次モーメントベクトルの推定の指数関数的減衰率は、[0、1）である必要があります。
+　　solver = ’adam’の場合にのみ使用されます
+
+　・epsilon:float, default=1e-8
+　　adamの数値安定性の値。
+　　solver = ’adam’の場合にのみ使用されます
+
+　・n_iter_no_change:int, default=10
+　　tolの改善を満たさないエポックの最大数。
+　　solver = ’sgd’または ‘adam’の場合にのみ有効
+　　New in version 0.20.
+
+　・max_fun:int, default=15000
+　　solver = ’lbfgs’の場合にのみ使用されます。
+　　損失関数呼び出しの最大数。
+　　ソルバーは収束（「tol」によって決定）、反復回数がmax_iter、
+　　またはこの損失関数呼び出しの回数に達するまで反復します。
+　　損失関数呼び出しの数は、MLPClassifierの反復数以上になることに注意してください。
+
+
