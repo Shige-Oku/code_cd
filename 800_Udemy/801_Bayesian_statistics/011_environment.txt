@@ -1,0 +1,23 @@
+
+・xlrdを anaconda からインストール
+　Excelファイル（.xlsx, .xls）の読み込み（入力）を行うためのライブラリ。
+
+以下もついでにインストール
+・xlwt
+　Excelファイル（.xls）の書き込み
+
+ウィジェットについて
+　Jupyter Notebookでは動作するが、Labでは、node.jsと拡張機能をインストールしないと動作しない。
+　https://github.com/jupyter-widgets/ipywidgets
+　https://github.com/jupyter-widgets/ipywidgets/blob/master/docs/source/user_install.md
+　
+　・ウィジェットのインストール
+　　conda install -c conda-forge ipywidgets
+　　or 
+　　pip install ipywidgets
+　・Node.js のインストール
+　　conda install -c conda-forge nodejs
+　・Jupter Lab拡張のインストール
+　　jupyter labextension install @jupyter-widgets/jupyterlab-manager
+
+
