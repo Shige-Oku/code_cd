@@ -20,4 +20,18 @@
 　・Jupter Lab拡張のインストール
 　　jupyter labextension install @jupyter-widgets/jupyterlab-manager
 
+・PyStanのインストール
+　・pystanの別環境を構築
+　　conda create -n pystan
+　・PyStanのインストール （Anaconda Naigatorからインストール）
+　　pip install pystan
+　・C++のインストール
+　　Getting started - PyStan 2.19.1.1 documentation
+　　https://pystan.readthedocs.io/en/latest/getting_started.html
+　　PyStan on Windows - PyStan 2.19.1.1 documentation
+　　https://pystan.readthedocs.io/en/latest/windows.html#windows
+　・mingw-w64 compilerのインストール
+　　conda install libpython m2w64-toolchain -c msys2
+　　conda install -c anaconda libpython
+
 
