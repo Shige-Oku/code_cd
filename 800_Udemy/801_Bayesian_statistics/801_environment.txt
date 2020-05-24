@@ -34,4 +34,7 @@
 　　conda install libpython m2w64-toolchain -c msys2
 　　conda install -c anaconda libpython
 
+・arvizを anaconda からインストール
+
+
 
